@@ -100,6 +100,38 @@
   .rel-legend{display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--muted)}
   .rel-legend span{display:flex;align-items:center;gap:5px}
   .rel-legend .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
+  /* ---- Overview gate cards ---- */
+  .ov-gate{border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .ov-gate .gname{font-weight:700;font-size:12.5px;flex:1}
+  .ov-gate .gstat{font-weight:700;font-size:16px;white-space:nowrap}
+  .ov-lever{border:1px solid var(--line);border-radius:8px;padding:10px 13px;margin-bottom:9px;background:var(--card)}
+  .ov-block{border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  /* ---- dark mode ---- */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:#e8f0f7; --muted:#7a95aa; --bg:#0f1923; --card:#182330;
+      --accent:#2aa87a; --accent-soft:#132d24; --warn:#e07858; --warn-soft:#3a1a10;
+      --line:#2a3d50; --blue:#5a93c8; --blue-soft:#152334; --gold:#c8a44a; --gold-soft:#27200a;
+    }
+    .web-node { background:#1f2d3d }
+    .fstate { background:#1f2d3d }
+    .bar-wrap, .stage .sbar { background:#1f2d3d }
+    .rel-grid td.rel-0 { background:#1f2d3d; color:#3d5570 }
+    .gauge-marker { background:var(--ink) }
+    .rosternote { background:var(--gold-soft); border-color:#3a3010; color:var(--gold) }
+    .tag.real { background:#c8d8e8; color:#182330 }
+    .tag.conf-low { background:var(--gold-soft); color:var(--gold) }
+    .tag.conf-med { background:var(--blue-soft); color:var(--blue) }
+    .tag.conf-high { background:var(--accent-soft); color:var(--accent) }
+    .tag.D { background:#152334; color:var(--blue) }
+    .tag.R { background:#2d1610; color:#e07858 }
+    .tag.org { background:#1e1530; color:#9a7acc }
+    .tag.path { background:var(--accent-soft); color:var(--accent) }
+    .tag.wedge { background:var(--gold-soft); color:var(--gold) }
+    .orgcard.wedgecard { background:var(--gold-soft); border-color:#3a3010 }
+    .web-node.oppc { background:var(--warn-soft); border-color:#5a2a1a }
+    .web-node.lever { background:var(--accent-soft); border-color:#1a5040 }
+  }
 </style>
 </head>
 <body>
@@ -116,7 +148,8 @@
 </div>
 
 <div class="tabs">
-  <button class="tab-btn active" data-tab="whip">Whip &amp; Actions</button>
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="whip">Whip &amp; Actions</button>
   <button class="tab-btn" data-tab="pathway">Path &amp; Committees</button>
   <button class="tab-btn" data-tab="house">House</button>
   <button class="tab-btn" data-tab="relationships">Relationships</button>
@@ -129,8 +162,29 @@
   <button class="tab-btn" data-tab="method">Method &amp; Sources</button>
 </div>
 
+<!-- ===== OVERVIEW ===== -->
+<div class="tab active" id="tab-overview">
+  <div id="ov-stats" class="stat-row"></div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>The gauntlet — where you stand <span class="hint">updates with every slider</span></h2>
+      <div class="note" style="margin-bottom:10px">Green = on track (≥70%). Yellow = at risk (40–70%). Red = binding constraint (&lt;40%). Fix the red ones first — they determine P(law) more than anything else.</div>
+      <div id="ov-gates"></div>
+    </div>
+    <div class="card">
+      <h2>From failure to victory <span class="hint">levers ranked by pts added to P(law)</span></h2>
+      <div class="note" style="margin-bottom:10px">Each lever is independent — they stack. The ranking shifts as you adjust sliders and relationships.</div>
+      <div id="ov-levers"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>What's standing in the way <span class="hint">— dynamically identifies failing gates, negative forces, and active opposition</span></h2>
+    <div id="ov-blocks"></div>
+  </div>
+</div>
+
 <!-- ===== WHIP ===== -->
-<div class="tab active" id="tab-whip">
+<div class="tab" id="tab-whip">
   <div class="stat-row">
     <div class="stat"><div class="label">P(Senate floor passage)</div><div class="value" id="passProb">–</div><div class="sub">if it reaches the floor</div></div>
     <div class="stat"><div class="label">P(becomes law)</div><div class="value" id="lawProb">–</div><div class="sub">full path, this session</div></div>
@@ -1142,6 +1196,208 @@ function buildRelPullTable() {
     }).join("") + '</tbody></table>';
 }
 
+window.switchTab = function(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  const btn = document.querySelector('.tab-btn[data-tab="' + name + '"]');
+  const tab = document.getElementById("tab-" + name);
+  if (btn) btn.classList.add("active");
+  if (tab) { tab.classList.add("active"); if (name === "relationships") buildRelGrid(); }
+};
+
+function refreshOverview() {
+  try {
+    const ev = evaluate(CAMPAIGN, state);
+    const { fx, results, mc, path, medianFinal } = ev;
+
+    /* ---- stat bar ---- */
+    const ovStats = document.getElementById("ov-stats");
+    if (ovStats) {
+      const gateShort = {
+        "Senate EET: chair schedules exec session": "EET scheduling",
+        "Senate EET: majority votes to advance (D 6-4)": "EET committee vote",
+        "Senate Ways & Means (fiscal gate)": "Ways & Means",
+        "Rules & floor calendar": "Senate Rules/calendar",
+        "Senate floor vote (Monte Carlo)": "Senate floor",
+        "House path (ENVI → Approps → floor)": "House path"
+      };
+      const binding = [...path.stages].sort((a, b) => a.p - b.p)[0];
+      const band = CAMPAIGN.spectrum.find(b => medianFinal <= b.max) || CAMPAIGN.spectrum[CAMPAIGN.spectrum.length - 1];
+      ovStats.innerHTML =
+        '<div class="stat"><div class="label">P(becomes law)</div>' +
+        '<div class="value ' + (path.law >= .3 ? 'big-green' : 'big-warn') + '">' + (path.law * 100).toFixed(1) + '%</div>' +
+        '<div class="sub">all six gates, this session</div></div>' +
+        '<div class="stat"><div class="label">P(Senate floor)</div>' +
+        '<div class="value ' + (mc.pPass >= .5 ? 'big-green' : 'big-warn') + '">' + (mc.pPass * 100).toFixed(0) + '%</div>' +
+        '<div class="sub">if it reaches the floor</div></div>' +
+        '<div class="stat"><div class="label">Binding gate</div>' +
+        '<div class="value" style="font-size:15px;color:' + (binding.p < 0.4 ? 'var(--warn)' : 'var(--gold)') + '">' + (gateShort[binding.name] || binding.name) + '</div>' +
+        '<div class="sub">' + (binding.p * 100).toFixed(0) + '% — lowest-probability gate</div></div>' +
+        '<div class="stat"><div class="label">Policy forecast</div>' +
+        '<div class="value" style="font-size:13px;font-weight:700;line-height:1.2;margin-top:4px;color:' + (medianFinal >= 72 ? 'var(--accent)' : medianFinal >= 50 ? 'var(--blue)' : 'var(--warn)') + '">' + band.label + '</div>' +
+        '<div class="sub">weighted-median landing zone</div></div>';
+    }
+
+    /* ---- gate status ---- */
+    const ovGates = document.getElementById("ov-gates");
+    if (ovGates) {
+      const advice = {
+        "Senate EET: chair schedules exec session": {
+          g: "Shewmake has signaled exec-session intent. Confirm the date by week 1.",
+          y: "At risk. Direct ask to Shewmake before session — what does she need? EPC slate, fee redesign, or W&M pre-clearance are the levers.",
+          r: "This is where the bill died in 2026. EPC slate + a November-to-January Shewmake ask are your two essential moves."
+        },
+        "Senate EET: majority votes to advance (D 6-4)": {
+          g: "D majority holds. Harris/MacEwen yes votes add floor narrative, not committee math.",
+          y: "One swing committee member is at risk. Check senators tab — health frame for Harris; Hood Canal shellfish story for MacEwen.",
+          r: "A committee D is wobbling. This rarely happens; if it does, identify who and why immediately."
+        },
+        "Senate Ways & Means (fiscal gate)": {
+          g: "Robinson cleared the fiscal concern. AWC's stormwater-protection frame is holding.",
+          y: "Budget climate is tough. AWC frame + fee redesign are your moves. Avoid calling it a 'tire tax.'",
+          r: "Budget crisis mode — fee-note bills are DOA. Consider the fee-stripped substitute path to move the ban alone."
+        },
+        "Rules & floor calendar": {
+          g: "Leadership has indicated floor time. Protect it — don't let scheduling slip past mid-February.",
+          y: "Calendar is uncertain. EPC slate (26-org priority ask) + early Senate passage unlock this gate.",
+          r: "The 2026 Senate bill died here too. EPC slate is the unlock — a single-bill ask rarely breaks through a crowded calendar."
+        },
+        "Senate floor vote (Monte Carlo)": {
+          g: "Floor majority is reachable. Whip tab shows the final few votes needed.",
+          y: "Competitive floor — within striking distance. Relationships tab → deploy to highest-pivot senators.",
+          r: "Whip count is short. Relationships tab: identify which orgs have no relationship with the top swing senators and fix that first."
+        },
+        "House path (ENVI → Approps → floor)": {
+          g: "House path is clear. Doglio + Hall + early Senate clearance = Jinkins floor time.",
+          y: "House floor calendar (gate H4) is the constraint. Senate passage before mid-February is the key. See House tab.",
+          r: "House floor calendar is binding — Jinkins needs the EPC ask and Senate must clear early. The votes exist; the calendar doesn't."
+        }
+      };
+      ovGates.innerHTML = path.stages.map(s => {
+        const status = s.p >= 0.70 ? 'g' : s.p >= 0.40 ? 'y' : 'r';
+        const colors = { g: '#1f7a5c', y: '#9a7b2d', r: '#b3502d' };
+        const bgs = { g: 'var(--accent-soft)', y: 'var(--gold-soft)', r: 'var(--warn-soft)' };
+        const icons = { g: '✓', y: '⚠', r: '✗' };
+        const tip = (advice[s.name] || {})[status] || '';
+        return '<div class="ov-gate" style="background:' + bgs[status] + ';border-left:4px solid ' + colors[status] + '">' +
+          '<div><div class="gname" style="color:' + colors[status] + '">' + icons[status] + ' ' + s.name + '</div>' +
+          (tip ? '<div class="note" style="margin-top:4px">' + tip + '</div>' : '') + '</div>' +
+          '<div class="gstat" style="color:' + colors[status] + '">' + (s.p * 100).toFixed(0) + '%</div></div>';
+      }).join('');
+    }
+
+    /* ---- levers ---- */
+    const ovLevers = document.getElementById("ov-levers");
+    if (ovLevers) {
+      const levers = [];
+
+      // EPC slate
+      if (!state.orgActive.epc) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.orgActive.epc = true;
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Win the EPC slate (26 orgs as one priority)', detail: 'The fall 2026 inside campaign. Boosts scheduling, calendar, and coalition pull simultaneously. The highest-leverage thing you can do before session.', delta: ev2.path.law - path.law, tab: 'coalition' });
+      }
+
+      // Scheduling lift
+      if (state.sched < 0.72) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.sched = Math.min(0.80, state.sched + 0.27);
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Win Shewmake\'s exec-session commitment before session starts', detail: 'Ask directly: what does she need — fee redesign? EPC slate? W&amp;M pre-clearance? One meeting before Thanksgiving is worth more than five in January.', delta: ev2.path.law - path.law, tab: 'pathway' });
+      }
+
+      // Fee redesign
+      if (state.factorSel.fee === 0) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.factorSel = { ...state.factorSel, fee: 2 };
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Redesign the fee before bill introduction (stormwater-dedicated, retailer-neutral)', detail: 'Peels Les Schwab and WA Trucking. Removes the awkward vote for Fey and Wylie. Converts Robinson\'s W&amp;M concern into a stormwater-investment story.', delta: ev2.path.law - path.law, tab: 'forces' });
+      }
+
+      // Budget framing
+      if (state.factorSel.budget === 0) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.factorSel = { ...state.factorSel, budget: 1 };
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Deploy AWC\'s stormwater-protection frame on Robinson and budget hawks', detail: '"Don\'t let tire runoff undermine the culvert billions" converts a fiscal-note liability into a fiscal-protection argument. Carl Schroeder is your messenger.', delta: ev2.path.law - path.law, tab: 'forces' });
+      }
+
+      // House calendar
+      if (state.hFloor < 0.65) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.hFloor = Math.min(0.82, state.hFloor + 0.26);
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Win Speaker Jinkins\' floor calendar commitment (House gate H4)', detail: 'EPC slate makes it a 26-org ask. Senate passage before mid-February leaves her floor time. The 2026 bill cleared two committees and died here.', delta: ev2.path.law - path.law, tab: 'house' });
+      }
+
+      // Flexsys / alternative validation
+      if (state.factorSel.alt === 0) {
+        const s2 = JSON.parse(JSON.stringify(state)); s2.factorSel = { ...state.factorSel, alt: 1 };
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: 'Get Flexsys alternative validated by Ecology before session', detail: 'Cracks USTMA\'s "no alternative exists" wall. Commission an Ecology review of the Flexsys Nov 2025 announcement during the interim. Puts Norberg and the Flexsys witness in the same hearing room.', delta: ev2.path.law - path.law, tab: 'forces' });
+      }
+
+      // Top rel deployment
+      const recs = [];
+      CAMPAIGN.senators.forEach((sen, j) => {
+        for (const o of CAMPAIGN.orgs) {
+          if (!state.orgActive[o.id]) continue;
+          const cur = state.rels[o.id][sen.id] || 0;
+          if (cur >= 2) continue;
+          const dP = senatorP(CAMPAIGN, state, sen, fx, { org: o.id, sen: sen.id, rel: cur + 1 }).p - results[j].p;
+          if (dP <= 0.001) continue;
+          recs.push({ o, sen, j, cur, gain: Math.max(0, mc.pivot[j]) * dP });
+        }
+      });
+      recs.sort((a, b) => b.gain - a.gain);
+      if (recs.length > 0) {
+        const top = recs[0];
+        const s2 = JSON.parse(JSON.stringify(state));
+        s2.rels[top.o.id][top.sen.id] = top.cur + 1;
+        const ev2 = evaluate(CAMPAIGN, s2);
+        levers.push({ action: (top.cur === 0 ? 'Open relationship: ' : 'Deepen to strong: ') + top.o.name + ' → ' + top.sen.name, detail: top.sen.note, delta: ev2.path.law - path.law, tab: 'relationships' });
+      }
+
+      levers.sort((a, b) => b.delta - a.delta);
+
+      ovLevers.innerHTML = levers.slice(0, 5).map((l, i) => {
+        const dStr = (l.delta * 100 >= 0.05) ? '+' + (l.delta * 100).toFixed(1) + ' pts law' : '&lt;0.1 pts';
+        return '<div class="ov-lever">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
+          '<b style="font-size:13px">' + (i + 1) + '. ' + l.action + '</b>' +
+          '<span class="tag path" style="white-space:nowrap">' + dStr + '</span></div>' +
+          '<div class="note" style="margin-top:5px">' + l.detail + ' <span style="color:var(--blue);cursor:pointer;text-decoration:underline" onclick="switchTab(\'' + l.tab + '\')">' + l.tab.charAt(0).toUpperCase() + l.tab.slice(1) + ' tab →</span></div></div>';
+      }).join('') || '<div class="note">All major levers are already activated. Try the "2026 reality check" to see the full range.</div>';
+    }
+
+    /* ---- stumbling blocks ---- */
+    const ovBlocks = document.getElementById("ov-blocks");
+    if (ovBlocks) {
+      const blocks = [];
+      // Failing gates
+      [...path.stages].sort((a, b) => a.p - b.p).filter(s => s.p < 0.60).forEach(s => {
+        blocks.push({ type: 'gate', title: s.name, note: (s.p * 100).toFixed(0) + '% — needs action before session', color: s.p < 0.4 ? 'var(--warn)' : 'var(--gold)' });
+      });
+      // Negative external forces
+      CAMPAIGN.factors.forEach(f => {
+        const sel = f.states[state.factorSel[f.id]];
+        if (sel.base < -3) blocks.push({ type: 'External force', title: f.name + ': "' + sel.label + '"', note: sel.base + ' pts applied to every senator\'s base lean', color: 'var(--gold)' });
+      });
+      // Active opposition
+      CAMPAIGN.opposition.forEach(a => {
+        if (state.oppMob[a.id] >= 1.0) blocks.push({ type: 'Opposition', title: a.name, note: a.note, color: 'var(--warn)' });
+      });
+
+      if (!blocks.length) {
+        ovBlocks.innerHTML = '<div class="note">No critical stumbling blocks under current settings. Switch to "2026 reality check" to see what killed the bill.</div>';
+      } else {
+        ovBlocks.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">' +
+          blocks.slice(0, 8).map(b => '<div class="ov-block" style="border-left:4px solid ' + b.color + '">' +
+            '<div class="note" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">' + b.type + '</div>' +
+            '<b style="font-size:12.5px">' + b.title + '</b>' +
+            '<div class="note" style="margin-top:4px">' + b.note + '</div></div>').join('') +
+          '</div>';
+      }
+    }
+  } catch (e) { console.error('refreshOverview:', e); }
+}
+
 function buildAll() {
   buildFactors(); buildSenators(); buildCoalition(); buildOpposition();
   buildPeople(); buildPathway(); buildHouse();
@@ -1275,6 +1531,8 @@ function refresh() {
         "<b>What this means:</b> The bill lands close to its introduced form. This is the outcome under strong coalition conditions and validated alternatives. Hold here — don't negotiate against yourself.";
     }
   } catch (e) { console.error(e); }
+
+  refreshOverview();
 }
 
 buildAll(); refresh();

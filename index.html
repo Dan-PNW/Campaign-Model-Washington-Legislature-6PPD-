@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6PPD Campaign Model — WA Legislature, 2027 run</title>
+<style>
+  :root {
+    --ink:#1a2733; --muted:#5b6b7a; --bg:#f4f6f8; --card:#fff;
+    --accent:#1f7a5c; --accent-soft:#e3f2ec; --warn:#b3502d; --warn-soft:#f9e9e2;
+    --line:#dde4ea; --blue:#2c5f8a; --gold:#9a7b2d; --gold-soft:#f6efdd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+  h1{font-size:21px;margin:0 0 4px}
+  .subtitle{color:var(--muted);margin-bottom:16px;font-size:13px;max-width:1100px}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .tab-btn{padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
+  .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tab{display:none}.tab.active{display:block}
+  .grid{display:grid;gap:14px}.grid-2{grid-template-columns:1fr 1fr}
+  @media(max-width:1000px){.grid-2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:15px 17px;margin-bottom:14px}
+  .card h2{font-size:15px;margin:0 0 10px}
+  .card h2 .hint{font-weight:400;color:var(--muted);font-size:12px}
+  .stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .stat{flex:1;min-width:140px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat .label{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .stat .value{font-size:24px;font-weight:700;margin-top:2px}
+  .stat .sub{color:var(--muted);font-size:12px;margin-top:2px}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  input[type=range]{width:100px;accent-color:var(--accent);vertical-align:middle}
+  .pct{display:inline-block;width:40px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .bar-wrap{background:#eef1f4;border-radius:4px;height:9px;width:100%;min-width:50px}
+  .bar{background:var(--accent);height:9px;border-radius:4px}
+  .tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;margin-right:3px}
+  .tag.D{background:#e3ecf6;color:#2c5f8a}.tag.R{background:#f6e7e3;color:#a04428}
+  .tag.org{background:#efe8f7;color:#6b4c9a}.tag.opp{background:var(--warn-soft);color:var(--warn)}
+  .tag.path{background:var(--accent-soft);color:var(--accent)}
+  .tag.real{background:#1a2733;color:#fff}
+  .tag.wedge{background:var(--gold-soft);color:var(--gold)}
+  .tag.champ{background:var(--accent);color:#fff}
+  .tag.exit{background:#5b2d6e;color:#fff}
+  .tag.ballot{background:#9a7b2d;color:#fff}
+  .note{color:var(--muted);font-size:12.5px;line-height:1.5}
+  .big-green{color:var(--accent)}.big-warn{color:var(--warn)}
+  .priority{background:var(--accent-soft);border-radius:8px;padding:9px 12px;margin-bottom:7px}
+  .priority b{display:block;font-size:13px}
+  .priority .why{color:var(--muted);font-size:12px}
+  .breakdown{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .breakdown .plus{color:var(--accent);font-weight:600}
+  .breakdown .minus{color:var(--warn);font-weight:600}
+  .scenarios{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .scen-btn{padding:7px 13px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:12.5px;font-weight:600}
+  .scen-btn:hover{background:var(--accent-soft)}
+  .orgcard{border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin-bottom:9px}
+  .orgcard.inactive{opacity:.45}
+  .orgcard.wedgecard{border-color:#d8c89a;background:var(--gold-soft)}
+  .orgcard b{font-size:13.5px}
+  .web-node{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;background:#fafbfc;display:inline-block;margin:3px 4px 3px 0}
+  .web-node.firm{background:#1a2733;color:#fff;font-weight:600}
+  .web-node.oppc{border-color:#e3b7a6;background:var(--warn-soft)}
+  .web-node.lever{border-color:#9fd0bd;background:var(--accent-soft)}
+  .factor{border:1px solid var(--line);border-radius:9px;padding:10px 13px;margin-bottom:9px}
+  .factor b{font-size:13px}
+  .fstates{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+  .fstate{padding:6px 11px;border:1px solid var(--line);border-radius:7px;background:#fafbfc;cursor:pointer;font-size:12px}
+  .fstate.sel{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+  .gauge{position:relative;height:54px;border-radius:8px;overflow:hidden;display:flex;margin:10px 0 4px}
+  .gauge .band{height:100%;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#fff;font-weight:600;text-align:center;line-height:1.2;padding:0 4px}
+  .gauge-marker{position:absolute;top:-2px;width:3px;height:58px;background:#1a2733;border-radius:2px}
+  .gauge-label{text-align:center;font-weight:700;font-size:15px;margin-top:8px}
+  .stage{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .stage .sname{width:280px;font-size:12.5px}
+  .stage .sbar{flex:1;background:#eef1f4;border-radius:5px;height:18px;position:relative}
+  .stage .sfill{height:18px;border-radius:5px;background:var(--blue)}
+  .stage .sval{width:120px;text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:600}
+  .person{border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin-bottom:9px}
+  .person b{font-size:13.5px}
+  .person a{color:var(--blue);font-size:12px;margin-right:10px}
+  .fineprint{color:var(--muted);font-size:11.5px;margin-top:18px;max-width:1100px}
+  canvas{width:100%;height:auto;display:block}
+  .rosternote{background:var(--gold-soft);border:1px solid #d8c89a;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#6e5a1f;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<h1>6PPD Ban &amp; Fee — Campaign Model v6, WA 2027</h1>
+<div class="subtitle">All organizations, individuals, and legislators are <b>real</b>. Senate: 30 D – 19 R; 20 solid YES, 10 solid NO, 19 modeled in play. House: ENVI Committee detailed (12D–9R). Base leans are <b>heuristic estimates</b> — starting points for your team's judgment, not facts. Donor fields await your PDC pull. Defaults reproduce 2026: SB 6119 heard in Senate EET Jan 20, <b>never got exec session</b>; HB 2421 cleared ENVI + Appropriations and <b>died at the floor calendar</b>. · <b>GitHub Pages ready</b>: self-contained, no CDN. Host at <code>github.com/[yourorg]/[repo]</code> → Settings → Pages → main branch, <code>/root</code>. Share the URL.</div>
+
+<div class="rosternote">⚠ Roster compiled June 2026 from leg.wa.gov, LegiScan, and election coverage. Verify against leg.wa.gov before circulating — appointments and resignations move fast, and everything changes after the November 2026 election. Members flagged <span class="tag exit">NOT RETURNING</span> or <span class="tag ballot">ON BALLOT NOV 2026</span>.</div>
+
+<div class="scenarios">
+  <button class="scen-btn" onclick="setScenario('reality2026')">▶ 2026 reality check</button>
+  <button class="scen-btn" onclick="setScenario('oppSurge')">⚠ Opposition surge</button>
+  <button class="scen-btn" onclick="setScenario('path2027')">✊ 2027 path-to-win</button>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="whip">Whip &amp; Actions</button>
+  <button class="tab-btn" data-tab="pathway">Path &amp; Committees</button>
+  <button class="tab-btn" data-tab="house">House</button>
+  <button class="tab-btn" data-tab="forces">External Forces</button>
+  <button class="tab-btn" data-tab="senators">Senators</button>
+  <button class="tab-btn" data-tab="coalition">Coalition</button>
+  <button class="tab-btn" data-tab="opposition">Opposition</button>
+  <button class="tab-btn" data-tab="people">People</button>
+  <button class="tab-btn" data-tab="forecast">Policy Forecast</button>
+  <button class="tab-btn" data-tab="method">Method &amp; Sources</button>
+</div>
+
+<!-- ===== WHIP ===== -->
+<div class="tab active" id="tab-whip">
+  <div class="stat-row">
+    <div class="stat"><div class="label">P(Senate floor passage)</div><div class="value" id="passProb">–</div><div class="sub">if it reaches the floor</div></div>
+    <div class="stat"><div class="label">P(becomes law)</div><div class="value" id="lawProb">–</div><div class="sub">full path, this session</div></div>
+    <div class="stat"><div class="label">Expected YES</div><div class="value" id="expVotes">–</div><div class="sub">need 25 of 49</div></div>
+    <div class="stat"><div class="label">Coalition lift</div><div class="value" id="coalLift">–</div><div class="sub">floor-passage pts vs. no coalition</div></div>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>Distribution of simulated floor outcomes <span class="hint">(20,000 roll calls)</span></h2>
+      <canvas id="histChart" width="660" height="270"></canvas>
+      <div class="note" id="realityNote" style="margin-top:6px"></div>
+    </div>
+    <div class="card">
+      <h2>Recommended next moves <span class="hint">— ranked by floor-passage gain</span></h2>
+      <div id="deployments"></div>
+      <div class="note">Tests every untried org→senator relationship and ranks the gain. Relationship values are starting estimates — correct them and the recommendations correct themselves.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PATHWAY ===== -->
+<div class="tab" id="tab-pathway">
+  <div class="card">
+    <h2>The gauntlet <span class="hint">— 2026 ground truth: the Senate bill died at gate #1 (no exec session); the House bill died at the calendar</span></h2>
+    <div id="stages"></div>
+    <div class="note" style="margin-top:8px"><b>Caveat:</b> stages correlate — priority status and budget conditions move several gates at once. Treat "P(becomes law)" as single-session odds; the 2026 run bought sponsors, testimony records, and committee passage history for 2027.</div>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>Senate Environment, Energy &amp; Technology <span class="hint">— real roster, 2025–26</span></h2>
+      <div class="note" style="margin-bottom:8px"><b>D (6):</b> Chair <b>Shewmake</b> (42), <b>Liias</b> (21, the bill's own prime sponsor), Dhingra (45), Lovelett (40), Slatter (48), Wellman (41) — all scored solid YES. <b>R (4):</b> Ranking <b>Boehnke</b> (8, leaving for Congress), Short (7, solid no), and swing-modeled <b>Harris</b> (17) and <b>MacEwen</b> (35).</div>
+      <div id="cmteReadout"></div>
+      <div style="margin-top:8px">Chair schedules executive session: <input type="range" min="0" max="100" step="5" value="45" id="schedSlider"> <span id="schedVal">45%</span>
+      <div class="note"><b>The 2026 lesson:</b> the D votes existed and the bill still never got an exec session. Scheduling = caucus priority, which is why the EPC-slate toggle (Coalition tab) boosts this gate. Shewmake's decision is the single highest-leverage moment of the Senate campaign.</div></div>
+    </div>
+    <div class="card">
+      <h2>The other gates</h2>
+      <div style="margin-bottom:10px">Senate Ways &amp; Means (Chair: June Robinson, D-38 — also a modeled swing vote): base <input type="range" min="0" max="100" step="5" value="55" id="wamSlider"> <span id="wamVal">55%</span>
+        <div class="note" id="wamNote"></div></div>
+      <div style="margin-bottom:10px">Rules &amp; floor calendar: <input type="range" min="0" max="100" step="5" value="60" id="rulesSlider"> <span id="rulesVal">60%</span>
+        <div class="note">Where the 2026 House bill died. Leadership priority is the whole game.</div></div>
+      <div style="margin-bottom:10px">House path (ENVI → Approps → floor): <b id="housePathDisplay">–</b> <span class="note">(computed from 4 sub-gates on the House tab)</span>
+        <div class="note">2026: cleared ENVI + Approps, died at calendar. Tune sub-gates on the <b>House tab</b>. Hall (VC + prime sponsor) + Doglio (chair) = strong ENVI; the floor calendar is the binding constraint.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOUSE ===== -->
+<div class="tab" id="tab-house">
+  <div class="rosternote">⚡ <b>The House is the stronger chamber.</b> HB 2421 (Hall) cleared House ENVI and House Appropriations in 2026 — both as substitutes — and died only at the floor calendar (sine die). The Senate bill never got an exec session. In 2027, if the Senate clears its gauntlet, the House path is shorter and friendlier. Verify roster at <a href="https://leg.wa.gov/about-the-legislature/committees/house-of-representatives/envi/" target="_blank">leg.wa.gov</a> — November 2026 election changes composition.</div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>House Environment &amp; Energy Committee <span class="hint">— real roster, 2025–26, 21 members</span></h2>
+      <div class="note" style="margin-bottom:8px">
+        <b>Leadership:</b> Chair <b>Beth Doglio</b> (D-22) — strong enviro, ran for Congress 2024, back in the House. Vice Chair <b>Zach Hall</b> (D-5) — the <span class="tag champ">PRIME SPONSOR</span> of HB 2421. His dual role makes scheduling near-automatic.<br>
+        <b>Ranking:</b> <b>Mary Dye</b> (R-9, Eastern WA — solid NO) · Asst. Ranking: <b>Mark Klicker</b> (R-16, Mid-Columbia — solid NO).
+      </div>
+      <table>
+        <thead><tr><th>Member</th><th>Dist</th><th>Role</th><th>Assessment</th></tr></thead>
+        <tbody>
+          <tr><td><b>Beth Doglio</b> <span class="tag D">D</span></td><td>22</td><td>Chair</td><td>Solid YES — bills scheduled and moved in 2026</td></tr>
+          <tr><td><b>Zach Hall</b> <span class="tag D">D</span></td><td>5</td><td>Vice Chair / Prime sponsor</td><td><span class="tag champ">CHAMPION</span> — authored the bill; owns the hearing</td></tr>
+          <tr><td><b>Liz Berry</b> <span class="tag D">D</span></td><td>36</td><td>Member</td><td>2026 co-sponsor — solid YES</td></tr>
+          <tr><td><b>Alex Ramel</b> <span class="tag D">D</span></td><td>40</td><td>Member</td><td>2026 co-sponsor — solid YES (Bellingham)</td></tr>
+          <tr><td><b>Davina Duerr</b> <span class="tag D">D</span></td><td>1</td><td>Member</td><td>Progressive Eastside D — solid YES</td></tr>
+          <tr><td><b>Jake Fey</b> <span class="tag D">D</span></td><td>27</td><td>Member</td><td>Tacoma-area moderate D — likely YES; watch fee framing</td></tr>
+          <tr><td><b>David Hackney</b> <span class="tag D">D</span></td><td>11</td><td>Member</td><td>South Seattle / Renton — likely YES; EJ frame lands</td></tr>
+          <tr><td><b>Shelley Kloba</b> <span class="tag D">D</span></td><td>1</td><td>Member</td><td>Progressive D — solid YES</td></tr>
+          <tr><td><b>Sharlett Mena</b> <span class="tag D">D</span></td><td>29</td><td>Member</td><td>Tacoma progressive — likely YES</td></tr>
+          <tr><td><b>Chris Stearns</b> <span class="tag D">D</span></td><td>47</td><td>Member</td><td>Kent/Auburn — likely YES; health-equity frame</td></tr>
+          <tr><td><b>Chipalo Street</b> <span class="tag D">D</span></td><td>37</td><td>Member</td><td>South Seattle progressive — solid YES</td></tr>
+          <tr><td><b>Sharon Wylie</b> <span class="tag D">D</span></td><td>49</td><td>Member</td><td>SW WA D — likely YES; watch business/Vancouver lens</td></tr>
+          <tr style="border-top:2px solid var(--line)"><td><b>Mary Dye</b> <span class="tag R">R</span></td><td>9</td><td>Ranking Member</td><td>Eastern WA — solid NO</td></tr>
+          <tr><td><b>Mark Klicker</b> <span class="tag R">R</span></td><td>16</td><td>Asst. Ranking</td><td>Mid-Columbia R — solid NO</td></tr>
+          <tr><td><b>Peter Abbarno</b> <span class="tag R">R</span></td><td>20</td><td>Member</td><td>SW WA moderate R — long shot; fee redesign might peel</td></tr>
+          <tr><td><b>Hunter Abell</b> <span class="tag R">R</span></td><td>7</td><td>Member</td><td>Rural NE WA — solid NO</td></tr>
+          <tr><td><b>Stephanie Barnard</b> <span class="tag R">R</span></td><td>8</td><td>Member</td><td>Kittitas — solid NO</td></tr>
+          <tr><td><b>John Ley</b> <span class="tag R">R</span></td><td>18</td><td>Member</td><td>Clark County R — solid NO (freight/trucking lens)</td></tr>
+          <tr><td><b>Gloria Mendoza</b> <span class="tag R">R</span></td><td>14</td><td>Member</td><td>Yakima Valley — solid NO</td></tr>
+          <tr><td><b>David Stuebe</b> <span class="tag R">R</span></td><td>17</td><td>Member</td><td>Yakima area — solid NO</td></tr>
+          <tr><td><b>Alex Ybarra</b> <span class="tag R">R</span></td><td>13</td><td>Member</td><td>Kittitas/Quincy — solid NO</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px"><b>Bottom line:</b> D 12–R 9. With Hall as VC + prime sponsor, scheduling is Hall's own ask. The committee vote is not a real gate — it's a formality. The 2026 record proves it.</div>
+    </div>
+    <div class="card">
+      <h2>House stage gates <span class="hint">— sub-components of "House path" in the gauntlet</span></h2>
+      <div class="note" style="margin-bottom:12px">These sliders feed the House path probability. Adjust them to reflect your 2027 read — the gauntlet on the Path tab automatically updates.</div>
+
+      <div style="margin-bottom:12px">
+        <b>Gate H1: ENVI Chair schedules exec session</b><br>
+        <div class="note">2026: scheduled and passed. Hall (VC + prime sponsor) + Doglio (strong enviro chair) = the D majority will hear it <em>if it's on the agenda</em>. Gate is about House leadership prioritizing floor time, not committee will.</div>
+        <input type="range" min="0" max="100" step="5" value="90" id="henvSchedSlider"> <span id="henvSchedVal">90%</span>
+      </div>
+      <div style="margin-bottom:12px">
+        <b>Gate H2: ENVI committee votes to advance</b><br>
+        <div class="note">12D vs 9R majority. If scheduled, passage is ~certain. All 12 D members are assessed YES or likely YES.</div>
+        <input type="range" min="0" max="100" step="5" value="95" id="henvVoteSlider"> <span id="henvVoteVal">95%</span>
+      </div>
+      <div style="margin-bottom:12px">
+        <b>Gate H3: House Appropriations (fiscal gate)</b><br>
+        <div class="note">2026: passed as 2nd substitute (fee stripped, ban timeline adjusted). <span class="tag ballot" style="font-size:11px">CHAIR UNKNOWN</span> Rep. Timm Ormsby (D-3, Spokane) is <b>retiring</b> after 23 years — Approps chair is TBD after Nov 2026 election. Successors from current Approps roster. Fee design is the lever: a redesigned fee that's "stormwater investment, not a tax" passes more cleanly.</div>
+        <input type="range" min="0" max="100" step="5" value="65" id="hAppropsSlider"> <span id="hAppropsVal">65%</span>
+      </div>
+      <div style="margin-bottom:12px">
+        <b>Gate H4: House Rules / floor calendar</b><br>
+        <div class="note"><b>Where the 2026 bill died.</b> Speaker Laurie Jinkins (D-27) controls the calendar. She didn't bring it to the floor — sine die took the bill. The 2027 unlock: EPC slate priority, Senate passage early enough to leave House floor time, and no repeat budget crunch. This is the House's own "scheduling gate."</div>
+        <input type="range" min="0" max="100" step="5" value="54" id="hFloorSlider"> <span id="hFloorVal">54%</span>
+      </div>
+
+      <div class="card" style="margin-top:8px;background:var(--accent-soft);border-color:#a0d4bf">
+        <h2>Computed House path probability</h2>
+        <div id="houseStages"></div>
+        <div class="note" style="margin-top:6px">Product of the four gates above. This is the number that feeds the "House path" stage in the main gauntlet.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>House 2026 track record &amp; 2027 strategic read</h2>
+    <div class="note">
+      <p><b>What happened:</b> HB 2421 (Hall, D-5) was heard in House ENVI on Jan 13, 2026 (Toxic-Free Future, Trout Unlimited, AWC, NWIFC testified for; USTMA, Les Schwab, WA Trucking testified against). The committee moved a 1st substitute, then Appropriations moved a 2nd substitute. The bill died in Rules/calendar at sine die — never reached the House floor.</p>
+      <p><b>The difference from the Senate:</b> the Senate bill (Liias) never even got an exec session. The House bill cleared two committees. In vote math, the House is safe — the problem is floor time and leadership prioritization, not member counts.</p>
+      <p><b>2027 target:</b> Rep. Hall returns as prime sponsor. Co-sponsors Berry and Ramel are both on ENVI. If the Senate passes early in session (February or earlier), there is floor time in the House. Speaker Jinkins' calendar decision is the critical ask. The EPC slate is the lever — a priority bill with 26-org backing gets scheduled; an orphan bill gets sine die'd again.</p>
+      <p><b>Approps chair watch:</b> Ormsby's retirement creates an unknown for 2027. The substitute path (fee stripped or redesigned) worked in 2026 — plan for the same flexibility. Build a relationship with whoever chairs Approps in 2027-28.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FORCES ===== -->
+<div class="tab" id="tab-forces">
+  <div class="card">
+    <h2>External forces <span class="hint">— conditions no lobby visit changes</span></h2>
+    <div id="factorCards"></div>
+    <div class="note" style="margin-top:8px">Set to your honest expectation for January 2027, then read the whip count.</div>
+  </div>
+</div>
+
+<!-- ===== SENATORS ===== -->
+<div class="tab" id="tab-senators">
+  <div class="card">
+    <h2>The 19 in play <span class="hint">— real members. P(yes) = base estimate + external forces + coalition − opposition ± your override.</span></h2>
+    <div class="note" style="margin-bottom:10px"><b>Scored solid YES (20):</b> sponsors Liias, Salomon, Bateman, V. Hunt, Pedersen + Stanford, Riccelli, Hasegawa, Trudeau, Frame, Saldaña, Lovelett, Shewmake, Dhingra, Valdez, Kauffman, Slatter, Wellman, Alvarado, C. Wilson.<br><b>Scored solid NO (10):</b> Braun, Schoesler, Short, McCune, King, Warnick, Holy, Christian, Goehner, Fortunato.<br>Disagree with any of these? Move them into the in-play list in the config — that's what it's for.</div>
+    <table id="senTable">
+      <thead><tr><th style="width:26%">Senator</th><th style="width:30%">Intel</th><th>Computed P(yes)</th><th>Override</th><th>Leverage</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== COALITION ===== -->
+<div class="tab" id="tab-coalition">
+  <div class="card">
+    <h2>Coalition <span class="hint">— all real. Relationship values are starting estimates; correct them. Pull = capacity × constituency share of district × relationship.</span></h2>
+    <div id="orgCards"></div>
+    <div class="note"><b>The EPC toggle remains the big one.</b> 6PPD wasn't on the 26-org Environmental Priorities Coalition's 2026 slate (budget, wildfire, data centers, bottle bill). Toggle ON = you won the fall 2026 slate campaign; it boosts both senator pull and committee scheduling. The tribal entries are not "coalition members" to be deployed — they are sovereign governments and the EPA petitioners on 6PPD; the model treats their engagement as the highest-weight variable, and your role is to support, not direct.</div>
+  </div>
+</div>
+
+<!-- ===== OPPOSITION ===== -->
+<div class="tab" id="tab-opposition">
+  <div class="card">
+    <h2>Opposition <span class="hint">— who showed up against the 2026 bills, plus the national money. Per-senator donor ties await your PDC pull; until then, opposition pressure is modeled chamber-wide.</span></h2>
+    <div id="oppCards"></div>
+  </div>
+  <div class="card">
+    <h2>The wedge</h2>
+    <div class="orgcard wedgecard">
+      <b>Flexsys</b> <span class="tag real">REAL</span> <span class="tag wedge">industry wedge</span>
+      <div class="note">Principal 6PPD producer — announced the first claimed viable <b>non-PPD</b> alternative (Nov 2025), developed against WA Ecology's hazard criteria. USTMA says the chemistry doesn't exist; the 6PPD maker says otherwise. Same hearing room, 2027. Validation status lives on External Forces.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Lobbyist web &amp; pressure paths <span class="hint">— firm names are placeholders pending your PDC Lobbyist Agent Employers pull</span></h2>
+    <div id="firmWebs"></div>
+  </div>
+</div>
+
+<!-- ===== PEOPLE ===== -->
+<div class="tab" id="tab-people">
+  <div class="card">
+    <h2>Named individuals <span class="hint">— LinkedIn links are search queries, not verified profiles. Confirm identity before outreach.</span></h2>
+    <div id="peopleCards"></div>
+    <div class="note" style="margin-top:6px"><b>Intel discipline:</b> PDC for clients and compensation; LinkedIn for history and shared connections; TVW for their exact words under questioning. One page per person before session.</div>
+  </div>
+</div>
+
+<!-- ===== FORECAST ===== -->
+<div class="tab" id="tab-forecast">
+  <div class="card">
+    <h2>Actor position map <span class="hint">— position (x) × weight (bubble) × side (color)</span></h2>
+    <canvas id="posMap" width="660" height="300"></canvas>
+    <div class="note">Dark line = weighted median. Green dashed = your position (88). Heavy moderate bubbles decide bills.</div>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>Bargaining rounds <span class="hint">— low-salience actors drift toward the median; high-salience actors hold</span></h2>
+      <canvas id="roundsChart" width="640" height="240"></canvas>
+      <div class="note" id="roundsNote"></div>
+    </div>
+    <div class="card">
+      <h2>Landing point</h2>
+      <div class="gauge" id="gauge"></div>
+      <div class="gauge-label" id="gaugeLabel">–</div>
+      <div class="note" style="text-align:center" id="gaugeSub"></div>
+      <div class="note" style="margin-top:10px">Les Schwab's stakeholder-process ask is what a 30–40 landing looks like: a detour, not a death. A statutorily-deadlined process with Ecology holding the pen may beat a dead bill two sessions running — your call, not the model's.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== METHOD ===== -->
+<div class="tab" id="tab-method">
+  <div class="card"><h2>Method &amp; data honesty</h2>
+    <div class="note">
+      <p><b>What is real:</b> the Senate roster and committee assignments, sponsors, the 2026 procedural history (SB 6119: hearing only, no exec session; HB 2421: cleared ENVI + Approps, died at calendar), hearing testimony and testifiers, retirements (Boehnke→Congress, Conway, and on the House side Springer, Ormsby, Tharinger, Volz, Graham), the litigation, the budget, Flexsys, and every named organization.</p>
+      <p><b>What is estimated (by design, awaiting your input):</b> base leans (heuristics from party, sponsorship, committee, district — labeled per senator), relationship depths, opposition mobilization, and the engine constants. Donor ties are EMPTY until you pull PDC Contributions to Candidates for the 19 targets — fabricating them for real people would poison the tool.</p>
+      <p><b>Engine (v6 additions):</b> House tab added with real House ENVI roster (21 members, 12D–9R) from leg.wa.gov June 2026; House path decomposed into 4 sub-gates (ENVI scheduling, ENVI vote, Appropriations, floor calendar) replacing the prior single slider. House path feeds Senate gauntlet automatically. GitHub Pages ready: self-contained single file, no CDN.</p>
+    </div>
+  </div>
+  <div class="card"><h2>Sources</h2>
+    <div class="note">
+      Senate EET roster: leg.wa.gov / BillTrack50 (Shewmake chair; Boehnke ranking; Dhingra, Harris, Liias, Lovelett, MacEwen, Short, Slatter, Wellman). House ENVI roster: leg.wa.gov/about-the-legislature/committees/house-of-representatives/envi/ (Doglio chair; Hall vice chair + prime sponsor; Dye ranking; 12D–9R; pulled June 2026). SB 6119 history: LegiScan (introduced 1/14/26; hearing in EET 1/20/26; no further action; sponsors Liias, Salomon, Bateman, V. Hunt, Pedersen). HB 2421: prime Hall; cleared ENVI &amp; Approps as substitutes; died at sine die. Retirements: Washington State Standard / NPI Cascadia Advocate / Spokesman coverage (Conway, Boehnke→WA-04 run; Springer, Ormsby, Tharinger, Volz, Graham in the House). 26th district: Krishnadasan def. Caldier 52.8–47.1 (Nov 2025 special). Hearings &amp; testimony: Puget Sound Institute (1/21/26). EPC: waconservationaction.org. Litigation: IFR &amp; PCFFA v. tire makers, bench trial concluded late Jan 2026, ruling pending. Flexsys announcement 11/18/25. Budget: $2.3B/2yr shortfall. Production data: PDC SODA API, OFM census district profiles, PDC F-1s.
+    </div>
+  </div>
+</div>
+
+<div class="fineprint">Internal strategy tool. Real people are named from public records (votes, sponsorships, testimony, registrations); leans and relationships are labeled estimates. Verify the roster and all identities before acting. Not for external distribution.</div>
+
+<script>
+/* ================= ENGINE + CONFIG (DOM-free; testable headless) ================= */
+"use strict";
+const TRIALS = 20000;
+
+const CAMPAIGN = {
+  name: "6PPD Ban & Fee — 2027 (real chamber)",
+  chamberSize: 49, threshold: 25, solidYes: 20, solidNo: 10,
+  kCoalition: 0.025, kOpposition: 0.13, oppGlobal: 0.10,
+  spectrum: [
+    { max: 25, label: "Bill dies again", color: "#8a4a32" },
+    { max: 42, label: "Stakeholder process / study", color: "#c97b5a" },
+    { max: 58, label: "Fee + alternatives assessment, no ban", color: "#d9a441" },
+    { max: 72, label: "Ban w/ off-ramps + weakened fee", color: "#5a93b8" },
+    { max: 100, label: "BAN by 2035 + full fee (intact)", color: "#1f7a5c" }
+  ],
+  ourPosition: 88,
+
+  // Senate EET: 6 D scored solid yes (Shewmake, Liias, Dhingra, Lovelett, Slatter, Wellman);
+  // Short + Boehnke scored no; Harris & MacEwen modeled live below. D majority = vote gate ~certain; SCHEDULING is the gate.
+  committee: { name:"Senate EET", solidYes:6, solidNo:2, swing:["harris","macewen"], majorityNeeded:0 },
+
+  factors: [
+    { id:"budget", name:"State budget climate",
+      desc:"2026 reality: $2.3B two-year shortfall; fiscal-note bills functionally DOA. Hits every member and the Ways & Means gate.",
+      states:[
+        { label:"Crisis (2026 conditions)", base:-8, oppMult:1.0, median:-7, wamMult:0.5 },
+        { label:"Tight but workable", base:-3, oppMult:1.0, median:-3, wamMult:0.8 },
+        { label:"Improving", base:0, oppMult:1.0, median:0, wamMult:1.0 } ], sel:0 },
+    { id:"alt", name:"6PPD alternative readiness",
+      desc:"USTMA: no viable alternative, 10+ years of testing. Flexsys (Nov 2025): first claimed non-PPD alternative, built to WA Ecology's hazard criteria. Unvalidated — but the wall is cracked.",
+      states:[
+        { label:"No proven alternative (USTMA line holds)", base:-6, oppMult:1.15, median:-6, wamMult:1 },
+        { label:"Flexsys-type candidate validated by Ecology", base:-1, oppMult:0.95, median:2, wamMult:1 },
+        { label:"Commercial drop-in proven at scale", base:6, oppMult:0.8, median:8, wamMult:1 } ], sel:0 },
+    { id:"lit", name:"CA litigation (IFR & PCFFA v. tire makers, ESA)",
+      desc:"Bench trial concluded late Jan 2026 (Judge Donato); ruling pending. Toxicity 'not a difficult conclusion,' remedy doubtful. Consensus expects tire makers to win on the law.",
+      states:[
+        { label:"Tire makers win (consensus)", base:-3, oppMult:1.0, median:-3, wamMult:1 },
+        { label:"Ruling pending / mixed", base:0, oppMult:1.0, median:0, wamMult:1 },
+        { label:"Plaintiffs win — regulation inevitable", base:5, oppMult:0.85, median:6, wamMult:1 } ], sel:1 },
+    { id:"fee", name:"Fee design",
+      desc:"The $3/$6 fee drew as much fire as the ban; the 2026 substitute stripped it. The one factor you control.",
+      states:[
+        { label:"Fee as introduced ($3/$6 per tire)", base:-2, oppMult:1.1, median:3, wamMult:1 },
+        { label:"Fee stripped (2026 substitute path)", base:2, oppMult:0.95, median:-6, wamMult:1.4 },
+        { label:"Fee redesigned (dedicated stormwater, retailer-neutral)", base:0, oppMult:1.0, median:1, wamMult:1.15 } ], sel:0 }
+  ],
+
+  /* 19 in-play, real members. base = HEURISTIC ESTIMATE. donors = pending PDC pull. */
+  senators: [
+    { id:"robinson", name:"Sen. June Robinson", party:"D", dist:38, base:.67, job:"Public-health administrator background",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{enviro:.5}, note:"WAYS & MEANS CHAIR — the fee lands on her desk. Win her on fee design and the fiscal gate opens. Everett: Salish Sea district." },
+    { id:"hansen", name:"Sen. Drew Hansen", party:"D", dist:23, base:.75, job:"Attorney",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{enviro:.55, tribal:.04, anglers:.3}, note:"Port Gamble S'Klallam Tribe — an EPA 6PPD petitioner — is in his district. Natural champion if asked directly." },
+    { id:"nobles", name:"Sen. T'wina Nobles", party:"D", dist:28, base:.65, job:"Nonprofit leader; ex-Tacoma Urban League CEO",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{black:.08, enviro:.4}, note:"Health-equity frame fits her record; Tacoma-area stormwater EJ story is local." },
+    { id:"orwall", name:"Sen. Tina Orwall", party:"D", dist:33, base:.65, job:"Social-work / housing policy background", ballot:true,
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{asian:.15, black:.1, enviro:.4}, note:"Appointed to the seat; ON BALLOT NOV 2026. Des Moines/SeaTac — Afghan Health Initiative and refugee-community CBOs are her constituents." },
+    { id:"lovick", name:"Sen. John Lovick", party:"D", dist:44, base:.65, job:"Ex-State Patrol trooper; ex-sheriff",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{enviro:.4}, note:"Road-safety credibility — the perfect validator against USTMA's 'tire safety' counterargument." },
+    { id:"chapman", name:"Sen. Mike Chapman", party:"D", dist:24, base:.55, job:"Ex-Clallam County commissioner",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{anglers:.6, tribal:.06, rural:.7}, note:"Olympic Peninsula timber-salmon moderate; Lower Elwha, Makah, Quileute country. Seatmate Tharinger retiring." },
+    { id:"conway", name:"Sen. Steve Conway", party:"D", dist:29, base:.55, job:"Labor economist (ret. UW Tacoma)", exit:true,
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{black:.1, enviro:.35}, note:"RETIRING after 2026 — 34-year career. Legacy-vote opportunity; labor frame vs. trucking pressure." },
+    { id:"cleveland", name:"Sen. Annette Cleveland", party:"D", dist:49, base:.50, job:"Health-system executive background",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{enviro:.4}, note:"Business-friendly Vancouver D. Pair with Harris (R-17) for a bipartisan SW Washington bloc." },
+    { id:"krishnadasan", name:"Sen. Deborah Krishnadasan", party:"D", dist:26, base:.50, job:"Community & school advocacy background",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{anglers:.5, enviro:.35}, note:"Held the swing 26th 52.8–47.1 over Caldier (Nov 2025 special). Gig Harbor salmon economy; fee-cautious." },
+    { id:"cortes", name:"Sen. Adrián Cortés", party:"D", dist:18, base:.45, job:"Educator; local-government background",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{latino:.15, rural:.4}, note:"D in an R-lean swing seat — votes his district. Fee framing decisive; affordability message required." },
+    { id:"muzzall", name:"Sen. Ron Muzzall", party:"R", dist:10, base:.30, job:"3rd-generation Whidbey Island farmer", ballot:true,
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{anglers:.55, enviro:.4, rural:.5}, note:"TOP R TARGET. ON BALLOT NOV 2026 in a swing district — election-year caution cuts both ways. Charter fishing + shellfish economy." },
+    { id:"harris", name:"Sen. Paul Harris", party:"R", dist:17, base:.28, job:"Business background; public-health record",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{asian:.08, enviro:.35}, note:"EET MEMBER. Vancouver moderate — pediatric/health frame is the door. A committee R yes = bipartisan cover for the floor." },
+    { id:"jwilson", name:"Sen. Jeff Wilson", party:"R", dist:19, base:.25, job:"Port of Longview commissioner",
+      donors:"→ PDC pull pending", oppTies:{wta:1},
+      demo:{anglers:.6, rural:.7, tribal:.05}, note:"Coastal 19th — Willapa/Chehalis salmon economy vs. port-freight lens (trucking tie = estimate, verify via PDC)." },
+    { id:"macewen", name:"Sen. Drew MacEwen", party:"R", dist:35, base:.25, job:"Businessman; Navy veteran",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{anglers:.55, rural:.6, tribal:.05}, note:"EET MEMBER. Hood Canal shellfish/salmon district; Skokomish Tribe in district. Second-best committee R." },
+    { id:"wagoner", name:"Sen. Keith Wagoner", party:"R", dist:39, base:.25, job:"Ret. Navy officer; ex-Sedro-Woolley mayor",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{anglers:.5, rural:.6, tribal:.06}, note:"Skagit salmon country; Stillaguamish and Sauk-Suiattle in district. Salmon-economy argument is native here." },
+    { id:"torres", name:"Sen. Nikki Torres", party:"R", dist:15, base:.20, job:"Small business; Pasco",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{latino:.55, rural:.7, faith:.4}, note:"Latina R in a farmworker district — Latino CBO door is real, ag-chem pressure equally real." },
+    { id:"gildon", name:"Sen. Chris Gildon", party:"R", dist:25, base:.20, job:"Ret. Army; Puyallup",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{tribal:.08, rural:.3}, note:"The Puyallup Tribe — an EPA 6PPD petitioner and major district employer — is his constituent. That conversation matters more than yours." },
+    { id:"boehnke", name:"Sen. Matt Boehnke", party:"R", dist:8, base:.15, job:"Cybersecurity professor; ex-Army aviator", exit:true,
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{rural:.5}, note:"EET RANKING MEMBER — LEAVING to run for Congress (WA-04). Primary dynamics likely harden the no. Plan for his successor on EET." },
+    { id:"dozier", name:"Sen. Perry Dozier", party:"R", dist:16, base:.15, job:"Wheat farmer; ex-Walla Walla commissioner",
+      donors:"→ PDC pull pending", oppTies:{},
+      demo:{rural:.8, faith:.4}, note:"Long shot — faith and rural doors only. Don't spend serious time here." }
+  ],
+
+  orgs: [
+    { id:"you", name:"Your organization (lead advocate)", type:"Statewide toxics", real:false, strength:8, defaultActive:true,
+      tags:{enviro:1}, rel:{},
+      note:"Map your real relationships into this card — every rel you add sharpens the deployment recommendations." },
+    { id:"epc", name:"EPC 2027 priority slate", type:"Coalition slate", real:true, strength:9, defaultActive:false,
+      tags:{enviro:.6, rural:.2}, rel:{},
+      note:"26 statewide orgs moving as one — IF 6PPD makes the 2027 slate (it wasn't a 2026 priority). Toggle ON = you won the fall slate campaign. Boosts scheduling gates too." },
+    { id:"tff", name:"Toxic-Free Future", type:"Statewide toxics", real:true, strength:8, defaultActive:true,
+      tags:{enviro:.9}, rel:{},
+      note:"Led 2026 support testimony (Valeriano). EPC member; the alternatives-assessment authority." },
+    { id:"wca", name:"Washington Conservation Action", type:"Statewide enviro", real:true, strength:8, defaultActive:true,
+      tags:{enviro:.8}, rel:{},
+      note:"EPC convener; legislative scorecard = accountability lever on wavering Ds; Tribal Nations Program = the right convening posture." },
+    { id:"soundkeeper", name:"Puget Soundkeeper Alliance", type:"Regional water", real:true, strength:6, defaultActive:true,
+      tags:{enviro:.6, anglers:.3}, rel:{},
+      note:"Ran 2026 action alerts on these bills; stormwater-permit litigation credibility." },
+    { id:"tu", name:"Trout Unlimited WA", type:"Sporting", real:true, strength:7, defaultActive:true,
+      tags:{anglers:1, rural:.3}, rel:{muzzall:1, jwilson:1, chapman:1, krishnadasan:1},
+      note:"Testified FOR ('nine years is more than ample'). The messenger for Muzzall, Wilson, MacEwen, Wagoner country. Rel values = estimates." },
+    { id:"awc", name:"Association of Washington Cities", type:"Cities", real:true, strength:8, defaultActive:true,
+      tags:{enviro:.3, rural:.4}, rel:{cortes:1, cleveland:1, lovick:1, robinson:1},
+      note:"Testified FOR (Schroeder): don't undermine culvert/stormwater billions. The fiscal argument — deploy on budget hawks and W&M." },
+    { id:"nwifc", name:"NW Indian Fisheries Commission", type:"Tribal (sovereign)", real:true, strength:9, defaultActive:true,
+      tags:{tribal:1, anglers:.4}, rel:{chapman:1, jwilson:1},
+      note:"Treaty-tribes fisheries body (Chair Ed Johnstone). 6PPD kills treaty-protected coho — co-management standing no legislator can wave away. Support their lead; don't direct it." },
+    { id:"puyallup", name:"Puyallup Tribe of Indians", type:"Tribal (sovereign)", real:true, strength:8, defaultActive:true,
+      tags:{tribal:1}, rel:{gildon:1, nobles:1},
+      note:"EPA 6PPD petitioner (2023, with Port Gamble S'Klallam and Yurok). Major Pierce County presence — the door to Gildon's 25th." },
+    { id:"pgst", name:"Port Gamble S'Klallam Tribe", type:"Tribal (sovereign)", real:true, strength:6, defaultActive:true,
+      tags:{tribal:1, anglers:.3}, rel:{hansen:1},
+      note:"EPA petitioner; in Hansen's 23rd. Petition-to-legislation narrative writes itself." },
+    { id:"quinault", name:"Quinault Indian Nation", type:"Tribal (sovereign)", real:true, strength:7, defaultActive:true,
+      tags:{tribal:1, anglers:.4}, rel:{jwilson:1, chapman:1},
+      note:"Coastal salmon nation in the 19th/24th — the credible voice for J. Wilson and Chapman." },
+    { id:"drcc", name:"Duwamish River Community Coalition", type:"CBO — EJ", real:true, strength:6, defaultActive:true,
+      tags:{latino:.4, asian:.2, black:.2, enviro:.5}, rel:{},
+      note:"Duwamish Valley (South Park/Georgetown) — Superfund + stormwater lived expertise; the strongest urban-EJ testimony on what tire runoff does to a working river community." },
+    { id:"ahi", name:"Afghan Health Initiative", type:"CBO — health", real:true, strength:5, defaultActive:true,
+      tags:{asian:.4, faith:.3}, rel:{orwall:1},
+      note:"South King County refugee/immigrant health org — health-equity frame in Orwall's and Kauffman's districts. New constituency voice committees haven't heard on this bill." },
+    { id:"ecoss", name:"ECOSS", type:"CBO — multicultural enviro", real:true, strength:5, defaultActive:true,
+      tags:{asian:.3, latino:.3, enviro:.4}, rel:{},
+      note:"Multilingual environmental outreach across South Seattle/King County — turns technical stormwater policy into community testimony in five languages." },
+    { id:"fc", name:"Front and Centered", type:"EJ coalition", real:true, strength:7, defaultActive:true,
+      tags:{latino:.3, asian:.2, black:.2, enviro:.3}, rel:{},
+      note:"Statewide EJ coalition; HEAL Act architects. Their endorsement frames 6PPD as cumulative-impact policy, not just salmon policy." },
+    { id:"c2c", name:"Community to Community Development", type:"CBO — farmworker", real:true, strength:5, defaultActive:true,
+      tags:{latino:.8, faith:.2, rural:.4}, rel:{},
+      note:"Whatcom farmworker organizing (Shewmake/Lovelett country — already solid). Value is coalition breadth and the rural-Latino frame, not new votes." },
+    { id:"lcf", name:"Latino Community Fund of WA", type:"CBO — statewide", real:true, strength:5, defaultActive:true,
+      tags:{latino:.8}, rel:{torres:1, cortes:1},
+      note:"Statewide Latino network with Yakima Valley presence — the credible door to Torres's 15th and Cortés's 18th." }
+  ],
+
+  opposition: [
+    { id:"ustma", name:"U.S. Tire Manufacturers Association", real:true, clout:9, firm:"f1",
+      note:"Led 2026 opposition (Norberg): no viable alternative; 10+ years testing; safety risk. Runs the industry's global alternatives consortium — which doubles as the argument for patience." },
+    { id:"acc", name:"American Chemistry Council", real:true, clout:9, firm:"f2",
+      note:"National chemical lobby: preemption, 'sound science,' TSCA-process arguments. Price in at full strength for 2027." },
+    { id:"retail", name:"Les Schwab & tire retailers", real:true, clout:7, firm:"f1",
+      note:"Delay, not denial (Ziegler): stakeholder process on the copper brake-pad model; fighting fee-stacking. Negotiable — and the precedent they cite is one you won." },
+    { id:"wta", name:"Washington Trucking Associations", real:true, clout:6, firm:"f2",
+      note:"Call: the fee is 'a mandatory cost increase, not an incentive.' ~80% fee objection — split them from USTMA with fleet runway or fee redesign." }
+  ],
+
+  firms: {
+    f1: { name:"[Firm A — pull from PDC]", clients:[
+      {n:"U.S. Tire Manufacturers Association", opp:true}, {n:"Les Schwab / tire retail", opp:true},
+      {n:"Hospital & health-system clients", lever:true}, {n:"Retail & grocery clients", lever:true} ] },
+    f2: { name:"[Firm B — pull from PDC]", clients:[
+      {n:"American Chemistry Council", opp:true}, {n:"Washington Trucking Associations", opp:true},
+      {n:"Agricultural grower clients", lever:true}, {n:"Construction & ports clients"} ] }
+  },
+
+  people: [
+    { name:"Sen. Sharon Shewmake", side:"champion", role:"Chair, Senate EET (D-42); economist",
+      note:"GATEKEEPER #1. Her exec-session decision is where SB 6119 died in 2026 and where 2027 lives. The interim ask: what does she need — fee redesign? EPC slate? W&M pre-clearance? — to commit to executive action by week 2.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Sharon%20Shewmake"],["EET page","https://leg.wa.gov/about-the-legislature/committees/senate/enet/"]] },
+    { name:"Sen. June Robinson", side:"support", role:"Chair, Senate Ways & Means (D-38)",
+      note:"GATEKEEPER #2. In a deficit year she decides whether a fee bill is revenue or a headache. AWC's 'protect existing stormwater investments' frame is built for her.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=June%20Robinson%20Washington%20Senate"],["W&M page","https://leg.wa.gov/about-the-legislature/committees/senate/wm/"]] },
+    { name:"Rep. Zach Hall", side:"champion", role:"Prime sponsor, HB 2421",
+      note:"Co-sponsors Berry, Parshley, Zahn, Ramel, Pollet, Reed, Hill. House cleared two committees in 2026 — strongest chamber. First interim meeting.",
+      links:[["Bill page","https://app.leg.wa.gov/billsummary/?BillNumber=2421&Year=2025&Initiative=false"],["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Zach%20Hall%20Washington%20legislature"]] },
+    { name:"Sen. Marko Liias", side:"champion", role:"Prime sponsor, SB 6119 (D-21); EET member",
+      note:"Sponsor sitting ON the committee that didn't move his bill — the inside account of why is your most valuable interim intelligence. Co-sponsors Salomon, Bateman, V. Hunt, Pedersen.",
+      links:[["Bill page","https://app.leg.wa.gov/billsummary?BillNumber=6119&Year=2025"],["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Marko%20Liias"]] },
+    { name:"Laurie Valeriano", side:"support", role:"Executive Director, Toxic-Free Future",
+      note:"'Nothing is more motivating than a deadline.' The technical anchor witness.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Laurie%20Valeriano%20Toxic-Free%20Future"],["House hearing video","https://tvw.org/video/house-environment-energy-2026011382/?eventID=2026011382"]] },
+    { name:"Carl Schroeder", side:"support", role:"Government relations, Association of Washington Cities",
+      note:"The fiscal argument that outranks a fiscal note. Deploy on Robinson and budget hawks.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Carl%20Schroeder%20Association%20of%20Washington%20Cities"]] },
+    { name:"Alexei Calambokidis", side:"support", role:"WA policy, Trout Unlimited",
+      note:"'Nine years is more than ample.' The witness for Muzzall/Wilson/MacEwen country.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Alexei%20Calambokidis%20Trout%20Unlimited"],["Senate hearing video","https://tvw.org/video/senate-environment-energy-technology-2026011331/?eventID=2026011331"]] },
+    { name:"Ed Johnstone", side:"support", role:"Chair, NW Indian Fisheries Commission (Quinault)",
+      note:"The treaty-rights voice on 6PPD. Engagement runs government-to-government — your role is logistics and amplification, never direction.",
+      links:[["NWIFC","https://nwifc.org/"],["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Ed%20Johnstone%20fisheries"]] },
+    { name:"Paulina López", side:"support", role:"Executive Director, Duwamish River Community Coalition",
+      note:"The urban-EJ witness: what tire runoff means in a Superfund river community. Pairs the salmon story with the human one.",
+      links:[["DRCC","https://www.drcc.org/"],["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Paulina%20Lopez%20Duwamish"]] },
+    { name:"Tracey Norberg", side:"oppose", role:"EVP & General Counsel, USTMA",
+      note:"'The clock can't start ticking until the innovation has happened.' Build the 2027 hearing around rebutting this — ideally with Flexsys on the same panel.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Tracey%20Norberg%20Tire%20Manufacturers"],["House hearing video","https://tvw.org/video/house-environment-energy-2026011382/?eventID=2026011382"]] },
+    { name:"Jennifer Ziegler", side:"oppose", role:"Lobbyist for Les Schwab",
+      note:"Her stakeholder-process ask is a negotiating position. PDC will show her full client list — context for what she'll trade.",
+      links:[["PDC lobbyist search","https://www.pdc.wa.gov/political-disclosure-reporting-data/browse-search-data/lobbying"],["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Jennifer%20Ziegler%20Washington%20lobbyist"]] },
+    { name:"Sheri Call", side:"oppose", role:"President & CEO, Washington Trucking Associations",
+      note:"Most peelable major opponent — fleet runway or fee redesign answers ~80% of her testimony.",
+      links:[["LinkedIn search","https://www.linkedin.com/search/results/people/?keywords=Sheri%20Call%20Washington%20Trucking"]] },
+    { name:"Flexsys leadership", side:"wedge", role:"6PPD producer with announced non-PPD alternative",
+      note:"Identify the right witness (CTO or sustainability lead) during the interim.",
+      links:[["Announcement","https://www.businesswire.com/news/home/20251118951870/en/Flexsys-Announces-It-Has-Developed-the-Worlds-First-Viable-Alternative-to-6PPD-for-Use-in-Tires"],["LinkedIn company search","https://www.linkedin.com/search/results/companies/?keywords=Flexsys"]] }
+  ],
+
+  pressurePaths: [
+    "FLEXSYS vs. USTMA: the 6PPD maker says replacement is possible; the trade association says the chemistry doesn't exist. Same panel, 2027.",
+    "LES SCHWAB asks for a process, citing the copper brake-pad phase-out you won. A deadlined, Ecology-led process with the ban as backstop converts them.",
+    "WA TRUCKING: fleet-tire runway peels them — their own testimony conceded the logic.",
+    "EPC SLATE: the fall 2026 inside campaign. An orphan bill in a crisis session died; a priority bill gets scheduled. May be worth more than any legislator meeting.",
+    "TRIBAL LEAD: Puyallup and Port Gamble S'Klallam petitioned EPA on 6PPD — and sit in Gildon's and Hansen's districts. Petition-to-legislation is the narrative; sovereignty means they lead, you support.",
+    "PDC HOMEWORK: real firm registrations (Lobbyist Agent Employers) + donor histories for all 19 targets (Contributions to Candidates). Until loaded, opposition pressure is modeled chamber-wide — per-senator ties will sharpen everything."
+  ]
+};
+
+/* ----- house path ----- */
+function computeHousePath(st) {
+  return st.henvSched * st.henvVote * st.hApprops * st.hFloor;
+}
+
+/* ----- engine ----- */
+function defaultState(c) {
+  return {
+    orgActive: Object.fromEntries(c.orgs.map(o => [o.id, o.defaultActive !== false])),
+    orgStrength: Object.fromEntries(c.orgs.map(o => [o.id, o.strength])),
+    oppMob: Object.fromEntries(c.opposition.map(a => [a.id, 1.0])),
+    adj: Object.fromEntries(c.senators.map(s => [s.id, 0])),
+    factorSel: Object.fromEntries(c.factors.map(f => [f.id, f.sel])),
+    sched: 0.45, wamBase: 0.55, rulesCal: 0.60,
+    henvSched: 0.90, henvVote: 0.95, hApprops: 0.65, hFloor: 0.54
+  };
+}
+
+function factorEffects(c, st) {
+  let base = 0, oppMult = 1, median = 0, wamMult = 1;
+  for (const f of c.factors) {
+    const s = f.states[st.factorSel[f.id]];
+    base += s.base; oppMult *= s.oppMult; median += s.median; wamMult *= (s.wamMult || 1);
+  }
+  return { base: base / 100, oppMult, median, wamMult };
+}
+
+function coalitionRaw(c, st, sen, relOverride) {
+  let sum = 0;
+  for (const o of c.orgs) {
+    if (!st.orgActive[o.id]) continue;
+    let match = 0;
+    for (const t in o.tags) match += o.tags[t] * (sen.demo[t] || 0);
+    let rel = (o.rel[sen.id] || 0);
+    if (relOverride && relOverride.org === o.id && relOverride.sen === sen.id) rel = relOverride.rel;
+    sum += (st.orgStrength[o.id] / 10) * match * (1 + 0.45 * rel);
+  }
+  return sum;
+}
+
+function oppositionRaw(c, st, sen) {
+  let sum = 0, global = 0;
+  for (const a of c.opposition) {
+    const tie = sen.oppTies[a.id] || 0;
+    sum += (a.clout / 10) * (tie / 2) * st.oppMob[a.id];
+    global += (a.clout / 10) * st.oppMob[a.id];
+  }
+  return sum + c.oppGlobal * global;  // chamber-wide pressure until PDC ties are loaded
+}
+
+function senatorP(c, st, sen, fx, relOverride) {
+  const coal = c.kCoalition * coalitionRaw(c, st, sen, relOverride);
+  const opp = c.kOpposition * oppositionRaw(c, st, sen) * fx.oppMult;
+  const p = sen.base + fx.base + coal - opp + st.adj[sen.id] / 100;
+  return { p: Math.min(.98, Math.max(.02, p)), coal, opp };
+}
+
+function runMC(c, probs) {
+  const n = probs.length, counts = {}, totals = new Array(TRIALS);
+  let passCount = 0, sumVotes = 0;
+  const yesAndPass = new Array(n).fill(0), yesCnt = new Array(n).fill(0), noAndPass = new Array(n).fill(0);
+  for (let t = 0; t < TRIALS; t++) {
+    let yes = c.solidYes;
+    const cast = new Array(n);
+    for (let j = 0; j < n; j++) { const v = Math.random() < probs[j]; cast[j] = v; if (v) yes++; }
+    const pass = yes >= c.threshold;
+    if (pass) passCount++;
+    sumVotes += yes; totals[t] = yes; counts[yes] = (counts[yes] || 0) + 1;
+    for (let j = 0; j < n; j++) {
+      if (cast[j]) { yesCnt[j]++; if (pass) yesAndPass[j]++; } else if (pass) noAndPass[j]++;
+    }
+  }
+  totals.sort((a, b) => a - b);
+  const pivot = probs.map((_, j) => {
+    const nY = yesCnt[j], nN = TRIALS - nY;
+    return (nY === 0 || nN === 0) ? 0 : (yesAndPass[j] / nY - noAndPass[j] / nN);
+  });
+  return { pPass: passCount / TRIALS, expVotes: sumVotes / TRIALS,
+    p5: totals[Math.floor(TRIALS * .05)], p95: totals[Math.floor(TRIALS * .95)], counts, pivot };
+}
+
+function committeeVoteProb(c, results) {
+  const ids = c.committee.swing;
+  const ps = ids.map(id => results[c.senators.findIndex(s => s.id === id)].p);
+  const need = c.committee.majorityNeeded;
+  if (need <= 0) return 1;
+  let prob = 0;
+  const n = ps.length;
+  for (let mask = 0; mask < (1 << n); mask++) {
+    let cnt = 0, pr = 1;
+    for (let j = 0; j < n; j++) {
+      if (mask & (1 << j)) { cnt++; pr *= ps[j]; } else pr *= (1 - ps[j]);
+    }
+    if (cnt >= need) prob += pr;
+  }
+  return prob;
+}
+
+function pathway(c, st, fx, results, floorP) {
+  const epcBoost = st.orgActive.epc ? 0.15 : 0;
+  const sched = Math.min(.98, st.sched + epcBoost);
+  const cmteVote = committeeVoteProb(c, results);
+  const wam = Math.min(.95, st.wamBase * fx.wamMult);
+  const rules = Math.min(.95, st.rulesCal + epcBoost);
+  const stages = [
+    { name: "Senate EET: chair schedules exec session", p: sched },
+    { name: "Senate EET: majority votes to advance (D 6-4)", p: cmteVote },
+    { name: "Senate Ways & Means (fiscal gate)", p: wam },
+    { name: "Rules & floor calendar", p: rules },
+    { name: "Senate floor vote (Monte Carlo)", p: floorP },
+    { name: "House path (ENVI → Approps → floor)", p: computeHousePath(st) }
+  ];
+  let cum = 1;
+  stages.forEach(s => { cum *= s.p; s.cum = cum; });
+  return { stages, law: cum };
+}
+
+function actorList(c, st, results) {
+  const acts = [];
+  acts.push({ pos: 78, w: c.solidYes * 0.7, s: 0.7, group: "block", label: "Solid YES (20)" });
+  acts.push({ pos: 12, w: c.solidNo * 0.8, s: 0.7, group: "block", label: "Solid NO (10)" });
+  c.senators.forEach((sen, j) => acts.push({ pos: 15 + 70 * results[j].p, w: 0.6, s: 0.45, group: "senator", label: "" }));
+  for (const o of c.orgs) if (st.orgActive[o.id])
+    acts.push({ pos: 90, w: (st.orgStrength[o.id] / 10) * 1.8, s: 0.85, group: "org",
+      label: (o.id === "you" || o.id === "epc" || o.id === "nwifc") ? o.name.split(" ")[0] : "" });
+  for (const a of c.opposition)
+    acts.push({ pos: a.id === "retail" ? 30 : 8, w: (a.clout / 10) * 3.8 * st.oppMob[a.id], s: 0.9, group: "opp", label: a.name.split(" ")[0] });
+  return acts;
+}
+
+function weightedMedian(acts) {
+  const sorted = [...acts].sort((a, b) => a.pos - b.pos);
+  const totW = sorted.reduce((s, a) => s + a.w, 0);
+  let cum = 0, prevPos = sorted[0].pos;
+  for (const a of sorted) {
+    const before = cum;
+    cum += a.w;
+    if (cum >= totW / 2) {
+      const frac = (totW / 2 - before) / a.w;
+      return prevPos + (a.pos - prevPos) * Math.min(1, Math.max(0, frac));
+    }
+    prevPos = a.pos;
+  }
+  return 50;
+}
+
+function bargain(acts, rounds) {
+  const sim = acts.map(a => ({ ...a }));
+  const traj = [{ median: weightedMedian(sim), positions: sim.map(a => a.pos) }];
+  for (let r = 0; r < rounds; r++) {
+    const M = weightedMedian(sim);
+    sim.forEach(a => { a.pos += (M - a.pos) * 0.35 * (1 - a.s); });
+    traj.push({ median: weightedMedian(sim), positions: sim.map(a => a.pos) });
+  }
+  return traj;
+}
+
+function evaluate(c, st) {
+  const fx = factorEffects(c, st);
+  const results = c.senators.map(s => senatorP(c, st, s, fx));
+  const mc = runMC(c, results.map(r => r.p));
+  const stOff = JSON.parse(JSON.stringify(st));
+  for (const k in stOff.orgActive) stOff.orgActive[k] = false;
+  const mcOff = runMC(c, c.senators.map(s => senatorP(c, stOff, s, fx).p));
+  const path = pathway(c, st, fx, results, mc.pPass);
+  const acts = actorList(c, st, results);
+  const medianRaw = weightedMedian(acts);
+  const median = Math.min(98, Math.max(2, medianRaw + fx.median));
+  const traj = bargain(acts, 6);
+  const medianFinal = Math.min(98, Math.max(2, traj[traj.length - 1].median + fx.median));
+  return { fx, results, mc, lift: mc.pPass - mcOff.pPass, path, acts, median, medianFinal, traj };
+}
+
+if (typeof module !== "undefined") module.exports = { CAMPAIGN, defaultState, evaluate };
+
+/* ================= UI ================= */
+if (typeof document !== "undefined") {
+
+let state = defaultState(CAMPAIGN);
+let timer = null;
+
+document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+}));
+
+function schedule() { clearTimeout(timer); timer = setTimeout(refresh, 130); }
+
+window.setScenario = function (name) {
+  state = defaultState(CAMPAIGN);
+  if (name === "oppSurge") {
+    for (const k in state.oppMob) state.oppMob[k] = 1.5;
+    state.factorSel = { budget: 0, alt: 0, lit: 0, fee: 0 };
+    state.sched = 0.35;
+    state.henvSched = 0.80; state.henvVote = 0.90; state.hApprops = 0.55; state.hFloor = 0.38;
+  }
+  if (name === "path2027") {
+    state.factorSel = { budget: 1, alt: 1, lit: 1, fee: 2 };
+    state.orgActive.epc = true;
+    for (const k in state.orgStrength) state.orgStrength[k] = Math.min(10, state.orgStrength[k] + 1);
+    state.oppMob.retail = 0.5; state.oppMob.wta = 0.75;
+    state.sched = 0.8; state.wamBase = 0.65; state.rulesCal = 0.7;
+    state.henvSched = 0.93; state.henvVote = 0.97; state.hApprops = 0.78; state.hFloor = 0.84;
+  }
+  buildAll(); refresh();
+};
+
+/* ---------- dependency-free canvas charts ---------- */
+function ctx2d(id) { const c = document.getElementById(id); return { c, x: c.getContext("2d") }; }
+
+function drawHistogram(id, labels, values, colors, xLabel) {
+  const { c, x } = ctx2d(id);
+  x.clearRect(0, 0, c.width, c.height);
+  const m = { l: 40, r: 8, t: 10, b: 38 };
+  const W = c.width - m.l - m.r, H = c.height - m.t - m.b;
+  const maxV = Math.max(...values, 1) * 1.1;
+  x.strokeStyle = "#dde4ea"; x.fillStyle = "#5b6b7a"; x.font = "11px sans-serif";
+  for (let i = 0; i <= 3; i++) {
+    const v = maxV * i / 3, y = m.t + H - H * i / 3;
+    x.beginPath(); x.moveTo(m.l, y); x.lineTo(m.l + W, y); x.stroke();
+    x.fillText(v.toFixed(0) + "%", 6, y + 4);
+  }
+  const bw = W / values.length;
+  values.forEach((v, i) => {
+    x.fillStyle = colors[i];
+    const h = H * v / maxV;
+    x.fillRect(m.l + i * bw + 1, m.t + H - h, bw - 2, h);
+  });
+  x.fillStyle = "#5b6b7a";
+  labels.forEach((lb, i) => { if (i % 3 === 0) x.fillText(lb, m.l + i * bw + bw / 2 - 6, m.t + H + 14); });
+  x.fillText(xLabel, m.l + W / 2 - 60, c.height - 6);
+}
+
+function drawPositionMap(id, acts, median, ourPos, spectrum) {
+  const { c, x } = ctx2d(id);
+  x.clearRect(0, 0, c.width, c.height);
+  const m = { l: 14, r: 14, t: 24, b: 30 };
+  const W = c.width - m.l - m.r, H = c.height - m.t - m.b;
+  const X = pos => m.l + W * pos / 100;
+  let prev = 0;
+  for (const b of spectrum) {
+    x.fillStyle = b.color + "22";
+    x.fillRect(X(prev), m.t, X(b.max) - X(prev), H);
+    prev = b.max;
+  }
+  const rowY = { block: m.t + H * .14, senator: m.t + H * .40, org: m.t + H * .66, opp: m.t + H * .88 };
+  const colors = { block: "#1a2733", senator: "#5a93b8", org: "#1f7a5c", opp: "#b3502d" };
+  let si = 0;
+  acts.forEach(a => {
+    const r = 3 + Math.sqrt(a.w) * 4;
+    let y = rowY[a.group];
+    if (a.group === "senator") { y += ((si % 5) - 2) * 9; si++; }
+    x.beginPath(); x.arc(X(a.pos), y, r, 0, 7);
+    x.fillStyle = colors[a.group] + "B8"; x.fill();
+    x.strokeStyle = colors[a.group]; x.stroke();
+    if (a.label) { x.fillStyle = "#1a2733"; x.font = "10px sans-serif"; x.fillText(a.label, Math.min(X(a.pos) + r + 2, c.width - 60), y + 3); }
+  });
+  x.strokeStyle = "#1a2733"; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(X(median), m.t - 4); x.lineTo(X(median), m.t + H + 4); x.stroke();
+  x.fillStyle = "#1a2733"; x.font = "bold 11px sans-serif";
+  x.fillText("median " + median.toFixed(0), Math.min(X(median) + 4, c.width - 70), m.t + 4);
+  x.strokeStyle = "#1f7a5c"; x.lineWidth = 1.5; x.setLineDash([5, 4]);
+  x.beginPath(); x.moveTo(X(ourPos), m.t - 4); x.lineTo(X(ourPos), m.t + H + 4); x.stroke();
+  x.setLineDash([]); x.lineWidth = 1;
+  x.fillStyle = "#1f7a5c"; x.fillText("you", X(ourPos) - 24, m.t + 4);
+  x.fillStyle = "#5b6b7a"; x.font = "10.5px sans-serif";
+  [0, 25, 50, 75, 100].forEach(v => x.fillText(v, X(v) - 6, c.height - 14));
+  x.fillText("policy position (0 = no action, 100 = strongest bill)", m.l + W / 2 - 110, c.height - 2);
+  x.fillText("blocks", m.l, rowY.block - 12); x.fillText("senators", m.l, rowY.senator - 26);
+  x.fillText("coalition", m.l, rowY.org - 12); x.fillText("opposition", m.l, rowY.opp - 12);
+}
+
+function drawRounds(id, traj, fxMedian) {
+  const { c, x } = ctx2d(id);
+  x.clearRect(0, 0, c.width, c.height);
+  const m = { l: 34, r: 10, t: 12, b: 28 };
+  const W = c.width - m.l - m.r, H = c.height - m.t - m.b;
+  const X = r => m.l + W * r / (traj.length - 1);
+  const Y = p => m.t + H * (1 - p / 100);
+  x.strokeStyle = "#dde4ea";
+  [0, 25, 50, 75, 100].forEach(v => {
+    x.beginPath(); x.moveTo(m.l, Y(v)); x.lineTo(m.l + W, Y(v)); x.stroke();
+    x.fillStyle = "#5b6b7a"; x.font = "10px sans-serif"; x.fillText(v, 8, Y(v) + 3);
+  });
+  const nA = traj[0].positions.length;
+  x.strokeStyle = "rgba(90,147,184,.25)";
+  for (let a = 0; a < nA; a++) {
+    x.beginPath();
+    traj.forEach((t, r) => { const px = X(r), py = Y(t.positions[a]); r === 0 ? x.moveTo(px, py) : x.lineTo(px, py); });
+    x.stroke();
+  }
+  x.strokeStyle = "#1a2733"; x.lineWidth = 2.5;
+  x.beginPath();
+  traj.forEach((t, r) => { const px = X(r), py = Y(Math.min(98, Math.max(2, t.median + fxMedian))); r === 0 ? x.moveTo(px, py) : x.lineTo(px, py); });
+  x.stroke(); x.lineWidth = 1;
+  x.fillStyle = "#5b6b7a"; x.font = "10.5px sans-serif";
+  traj.forEach((_, r) => x.fillText(r, X(r) - 3, c.height - 12));
+  x.fillText("bargaining round", m.l + W / 2 - 45, c.height - 1);
+}
+
+/* ---------- builders ---------- */
+function buildFactors() {
+  const div = document.getElementById("factorCards");
+  div.innerHTML = "";
+  CAMPAIGN.factors.forEach(f => {
+    const card = document.createElement("div");
+    card.className = "factor";
+    card.innerHTML = '<b>' + f.name + '</b><div class="note">' + f.desc + '</div>' +
+      '<div class="fstates">' + f.states.map((s, i) =>
+        '<div class="fstate' + (state.factorSel[f.id] === i ? " sel" : "") + '" data-f="' + f.id + '" data-i="' + i + '">' + s.label +
+        ' <span style="opacity:.75">(' + (s.base > 0 ? "+" : "") + s.base + ')</span></div>').join("") + '</div>';
+    div.appendChild(card);
+  });
+  div.querySelectorAll(".fstate").forEach(el => el.addEventListener("click", () => {
+    state.factorSel[el.dataset.f] = +el.dataset.i;
+    buildFactors(); schedule();
+  }));
+}
+
+function buildSenators() {
+  const tbody = document.querySelector("#senTable tbody");
+  tbody.innerHTML = "";
+  CAMPAIGN.senators.forEach((s, j) => {
+    const tr = document.createElement("tr");
+    const flags = (s.exit ? '<span class="tag exit">NOT RETURNING</span>' : '') + (s.ballot ? '<span class="tag ballot">ON BALLOT NOV 2026</span>' : '');
+    const ties = Object.entries(s.oppTies).map(([k, v]) =>
+      '<span class="tag opp">' + CAMPAIGN.opposition.find(a => a.id === k).name.split(" ").slice(0, 2).join(" ") + ' tie ' + v + '/2 (est.)</span>').join("");
+    tr.innerHTML =
+      '<td><b>' + s.name + '</b> <span class="tag ' + s.party + '">' + s.party + "-" + s.dist + '</span>' + flags +
+      '<div class="note">' + s.note + '</div></td>' +
+      '<td><div class="note"><b>Background:</b> ' + s.job + '<br><b>Donors:</b> ' + s.donors + '<br>' + (ties || "<i>opposition ties: pending PDC pull</i>") + '</div></td>' +
+      '<td><span class="pct" id="sp-' + j + '">–</span><div class="breakdown" id="sb-' + j + '"></div></td>' +
+      '<td><input type="range" min="-25" max="25" step="5" value="' + state.adj[s.id] + '" data-id="' + s.id + '"><div class="note" id="adj-' + j + '">0</div></td>' +
+      '<td><div class="bar-wrap"><div class="bar" id="lev-' + j + '" style="width:0%"></div></div><div class="note" id="levt-' + j + '"></div></td>';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll("input[type=range]").forEach(sl => sl.addEventListener("input", e => {
+    state.adj[e.target.dataset.id] = +e.target.value; schedule();
+  }));
+}
+
+function buildCoalition() {
+  const div = document.getElementById("orgCards");
+  div.innerHTML = "";
+  CAMPAIGN.orgs.forEach(o => {
+    const card = document.createElement("div");
+    card.className = "orgcard" + (state.orgActive[o.id] ? "" : " inactive");
+    card.id = "org-" + o.id;
+    card.innerHTML =
+      '<label style="float:right"><input type="checkbox" ' + (state.orgActive[o.id] ? "checked" : "") + ' data-id="' + o.id + '" class="orgtoggle"> active</label>' +
+      '<b>' + o.name + '</b> ' + (o.real ? '<span class="tag real">REAL</span>' : '') + '<span class="tag org">' + o.type + '</span>' +
+      '<div class="note">' + o.note + '</div>' +
+      '<div style="margin-top:5px">Capacity <input type="range" min="1" max="10" value="' + state.orgStrength[o.id] + '" data-id="' + o.id + '" class="orgstr"> <span id="ostr-' + o.id + '">' + state.orgStrength[o.id] + '</span>/10' +
+      ' &nbsp; <span class="note">Relationships (est.): ' + (Object.keys(o.rel).length ?
+        Object.entries(o.rel).map(([sid, r]) => { const sn = CAMPAIGN.senators.find(s => s.id === sid); return sn ? sn.name.replace("Sen. ", "") + " (" + (r === 2 ? "strong" : "contact") + ")" : sid; }).join(", ") : "none mapped yet") + '</span></div>';
+    div.appendChild(card);
+  });
+  div.querySelectorAll(".orgtoggle").forEach(cb => cb.addEventListener("change", e => {
+    state.orgActive[e.target.dataset.id] = e.target.checked;
+    document.getElementById("org-" + e.target.dataset.id).classList.toggle("inactive", !e.target.checked);
+    schedule();
+  }));
+  div.querySelectorAll(".orgstr").forEach(sl => sl.addEventListener("input", e => {
+    state.orgStrength[e.target.dataset.id] = +e.target.value;
+    document.getElementById("ostr-" + e.target.dataset.id).textContent = e.target.value;
+    schedule();
+  }));
+}
+
+function buildOpposition() {
+  const div = document.getElementById("oppCards");
+  div.innerHTML = "";
+  CAMPAIGN.opposition.forEach(a => {
+    const card = document.createElement("div");
+    card.className = "orgcard";
+    card.innerHTML =
+      '<b>' + a.name + '</b> ' + (a.real ? '<span class="tag real">REAL</span>' : '') + '<span class="tag opp">clout ' + a.clout + '/10</span>' +
+      '<div class="note">' + a.note + '</div>' +
+      '<div style="margin-top:5px">Mobilization <input type="range" min="0" max="150" step="25" value="' + (state.oppMob[a.id] * 100) + '" data-id="' + a.id + '" class="oppmob"> <span id="omob-' + a.id + '">' + Math.round(state.oppMob[a.id] * 100) + '%</span></div>';
+    div.appendChild(card);
+  });
+  div.querySelectorAll(".oppmob").forEach(sl => sl.addEventListener("input", e => {
+    state.oppMob[e.target.dataset.id] = +e.target.value / 100;
+    document.getElementById("omob-" + e.target.dataset.id).textContent = e.target.value + "%";
+    schedule();
+  }));
+
+  const webs = document.getElementById("firmWebs");
+  webs.innerHTML = "";
+  for (const fid in CAMPAIGN.firms) {
+    const f = CAMPAIGN.firms[fid];
+    const w = document.createElement("div");
+    w.style.marginBottom = "12px";
+    w.innerHTML = '<div class="web-node firm">' + f.name + '</div><br>' +
+      f.clients.map(cl => '<div class="web-node' + (cl.opp ? " oppc" : cl.lever ? " lever" : "") + '">' + cl.n +
+        (cl.opp ? ' <span class="tag opp">opposing</span>' : cl.lever ? ' <span class="tag path">pressure path</span>' : "") + '</div>').join("");
+    webs.appendChild(w);
+  }
+  const pp = document.createElement("div");
+  pp.style.marginTop = "10px";
+  pp.innerHTML = "<b style='font-size:13px'>Pressure paths & wedges</b>" + CAMPAIGN.pressurePaths.map(t => '<div class="priority"><span class="why">' + t + '</span></div>').join("");
+  webs.appendChild(pp);
+}
+
+function buildPeople() {
+  const div = document.getElementById("peopleCards");
+  div.innerHTML = "";
+  const sideTag = { champion: '<span class="tag champ">CHAMPION</span>', support: '<span class="tag path">SUPPORT</span>',
+    oppose: '<span class="tag opp">OPPOSE</span>', wedge: '<span class="tag wedge">WEDGE</span>' };
+  CAMPAIGN.people.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "person";
+    card.innerHTML = '<b>' + p.name + '</b> ' + sideTag[p.side] + ' <span class="note">' + p.role + '</span>' +
+      '<div class="note" style="margin:4px 0">' + p.note + '</div>' +
+      p.links.map(l => '<a href="' + l[1] + '" target="_blank" rel="noopener">' + l[0] + ' ↗</a>').join("");
+    div.appendChild(card);
+  });
+}
+
+function buildPathway() {
+  [["schedSlider","schedVal","sched"],["wamSlider","wamVal","wamBase"],["rulesSlider","rulesVal","rulesCal"]].forEach(([sl, val, key]) => {
+    const el = document.getElementById(sl);
+    el.value = state[key] * 100;
+    document.getElementById(val).textContent = Math.round(state[key] * 100) + "%";
+    el.oninput = e => {
+      state[key] = +e.target.value / 100;
+      document.getElementById(val).textContent = e.target.value + "%";
+      schedule();
+    };
+  });
+}
+
+function buildHouse() {
+  const sliders = [
+    ["henvSchedSlider","henvSchedVal","henvSched"],
+    ["henvVoteSlider","henvVoteVal","henvVote"],
+    ["hAppropsSlider","hAppropsVal","hApprops"],
+    ["hFloorSlider","hFloorVal","hFloor"]
+  ];
+  sliders.forEach(([slId, valId, key]) => {
+    const el = document.getElementById(slId);
+    if (!el) return;
+    el.value = Math.round(state[key] * 100);
+    document.getElementById(valId).textContent = Math.round(state[key] * 100) + "%";
+    el.oninput = e => {
+      state[key] = +e.target.value / 100;
+      document.getElementById(valId).textContent = e.target.value + "%";
+      refreshHouseStages();
+      schedule();
+    };
+  });
+  refreshHouseStages();
+}
+
+function refreshHouseStages() {
+  const el = document.getElementById("houseStages");
+  if (!el) return;
+  const gates = [
+    { name: "ENVI: chair schedules exec session", p: state.henvSched },
+    { name: "ENVI: committee votes to advance (D 12–9)", p: state.henvVote },
+    { name: "House Appropriations (fiscal gate)", p: state.hApprops },
+    { name: "House Rules / floor calendar", p: state.hFloor }
+  ];
+  let cum = 1;
+  el.innerHTML = gates.map(g => {
+    cum *= g.p;
+    return '<div class="stage"><div class="sname">' + g.name + '</div>' +
+      '<div class="sbar"><div class="sfill" style="width:' + (g.p * 100).toFixed(0) + '%;background:var(--blue)"></div></div>' +
+      '<div class="sval">' + (g.p * 100).toFixed(0) + '% <span class="note">(cum ' + (cum * 100).toFixed(1) + '%)</span></div></div>';
+  }).join("") +
+    '<div class="stage"><div class="sname"><b>House path probability</b></div>' +
+    '<div class="sbar"><div class="sfill" style="width:' + Math.min(100, cum * 100).toFixed(0) + '%;background:var(--accent)"></div></div>' +
+    '<div class="sval"><b>' + (cum * 100).toFixed(1) + '%</b></div></div>';
+}
+
+function buildAll() { buildFactors(); buildSenators(); buildCoalition(); buildOpposition(); buildPeople(); buildPathway(); buildHouse(); }
+
+function refresh() {
+  const ev = evaluate(CAMPAIGN, state);
+  const { fx, results, mc, lift, path, acts, median, medianFinal, traj } = ev;
+
+  try {
+    const pp = document.getElementById("passProb");
+    pp.textContent = (mc.pPass * 100).toFixed(0) + "%";
+    pp.className = "value " + (mc.pPass >= .5 ? "big-green" : "big-warn");
+    const lp = document.getElementById("lawProb");
+    lp.textContent = (path.law * 100).toFixed(1) + "%";
+    lp.className = "value " + (path.law >= .3 ? "big-green" : "big-warn");
+    document.getElementById("expVotes").textContent = mc.expVotes.toFixed(1);
+    const cl = document.getElementById("coalLift");
+    cl.textContent = "+" + (lift * 100).toFixed(0) + " pts";
+    cl.className = "value big-green";
+    document.getElementById("realityNote").innerHTML =
+      mc.pPass < .35 ? "<b>Roughly January 2026.</b> Note where the path dies: gate #1 (scheduling) and the fiscal gate — not the floor. That's why the EPC slate and fee design outrank another lobby visit." :
+      mc.pPass < .55 ? "Floor is competitive — but check P(becomes law): the gauntlet, not the vote, is usually the binding constraint." :
+      "Floor is winnable under these assumptions. Now protect the gates: scheduling, W&M, calendar.";
+  } catch (e) { console.error(e); }
+
+  try {
+    const maxPiv = Math.max(...mc.pivot, .001);
+    results.forEach((r, j) => {
+      document.getElementById("sp-" + j).textContent = Math.round(r.p * 100) + "%";
+      document.getElementById("sb-" + j).innerHTML =
+        "base " + Math.round(CAMPAIGN.senators[j].base * 100) +
+        ' <span class="' + (fx.base >= 0 ? 'plus' : 'minus') + '">' + (fx.base >= 0 ? "+" : "−") + Math.abs(Math.round(fx.base * 100)) + " forces</span>" +
+        ' <span class="plus">+' + Math.round(r.coal * 100) + "</span>" +
+        ' <span class="minus">−' + Math.round(r.opp * 100) + "</span>" +
+        (state.adj[CAMPAIGN.senators[j].id] ? " adj " + state.adj[CAMPAIGN.senators[j].id] : "");
+      document.getElementById("adj-" + j).textContent = state.adj[CAMPAIGN.senators[j].id] + " pts";
+      document.getElementById("lev-" + j).style.width = (Math.max(0, mc.pivot[j]) / maxPiv * 100).toFixed(0) + "%";
+      document.getElementById("levt-" + j).textContent = "pivot " + (mc.pivot[j] * 100).toFixed(0) + "%";
+    });
+  } catch (e) { console.error(e); }
+
+  try {
+    const recs = [];
+    CAMPAIGN.senators.forEach((sen, j) => {
+      for (const o of CAMPAIGN.orgs) {
+        if (!state.orgActive[o.id]) continue;
+        const cur = o.rel[sen.id] || 0;
+        if (cur >= 2) continue;
+        const next = senatorP(CAMPAIGN, state, sen, fx, { org: o.id, sen: sen.id, rel: cur + 1 }).p;
+        const dP = next - results[j].p;
+        if (dP <= 0.001) continue;
+        recs.push({ org: o, sen, dP, gain: Math.max(0, mc.pivot[j]) * dP, cur });
+      }
+    });
+    recs.sort((a, b) => b.gain - a.gain);
+    document.getElementById("deployments").innerHTML = recs.slice(0, 6).map((r, k) =>
+      '<div class="priority"><b>' + (k + 1) + ". " + r.org.name + " → " + r.sen.name + "</b>" +
+      '<span class="why">' + (r.cur === 0 ? "Open a relationship" : "Deepen into a strong relationship") +
+      " · their P(yes) +" + (r.dP * 100).toFixed(1) + " pts · floor passage +" + (r.gain * 100).toFixed(2) + " pts</span></div>").join("") ||
+      '<div class="note">No positive-value deployments left.</div>';
+  } catch (e) { console.error(e); }
+
+  try {
+    const minV = CAMPAIGN.solidYes, maxV = CAMPAIGN.solidYes + CAMPAIGN.senators.length;
+    const labels = [], data = [], colors = [];
+    for (let v = minV; v <= maxV; v++) {
+      labels.push(String(v)); data.push((mc.counts[v] || 0) / TRIALS * 100);
+      colors.push(v >= CAMPAIGN.threshold ? "#1f7a5c" : "#c97b5a");
+    }
+    drawHistogram("histChart", labels, data, colors, "Total YES votes (25 to pass)");
+  } catch (e) { console.error(e); }
+
+  try {
+    const div = document.getElementById("stages");
+    div.innerHTML = path.stages.map(s =>
+      '<div class="stage"><div class="sname">' + s.name + '</div>' +
+      '<div class="sbar"><div class="sfill" style="width:' + (s.p * 100).toFixed(0) + '%"></div></div>' +
+      '<div class="sval">' + (s.p * 100).toFixed(0) + '% <span class="note">(cum ' + (s.cum * 100).toFixed(1) + '%)</span></div></div>').join("") +
+      '<div class="stage"><div class="sname"><b>P(becomes law, this session)</b></div><div class="sbar"><div class="sfill" style="width:' + Math.min(100, path.law * 100).toFixed(0) + '%;background:' + (path.law >= .3 ? 'var(--accent)' : 'var(--warn)') + '"></div></div><div class="sval"><b>' + (path.law * 100).toFixed(1) + '%</b></div></div>';
+    document.getElementById("cmteReadout").innerHTML =
+      CAMPAIGN.committee.swing.map(id => {
+        const j = CAMPAIGN.senators.findIndex(s => s.id === id);
+        return '<span class="web-node">' + CAMPAIGN.senators[j].name.replace("Sen. ", "") + ': <b>' + Math.round(results[j].p * 100) + '%</b> <span class="note">(bipartisan cover)</span></span>';
+      }).join("") +
+      '<div class="note" style="margin-top:6px">D majority (6 of 10) means the votes exist if it\'s scheduled — exactly the 2026 situation. Harris/MacEwen yes votes don\'t change committee passage; they change the floor narrative.</div>';
+    document.getElementById("wamNote").innerHTML = "Budget × fee multiplier currently: ×" + fx.wamMult.toFixed(2) + " → effective <b>" + (Math.min(.95, state.wamBase * fx.wamMult) * 100).toFixed(0) + "%</b>. Robinson chairs — see People tab.";
+    const hpd = document.getElementById("housePathDisplay");
+    if (hpd) hpd.textContent = (computeHousePath(state) * 100).toFixed(0) + "%";
+    refreshHouseStages();
+  } catch (e) { console.error(e); }
+
+  try {
+    drawPositionMap("posMap", acts, median, CAMPAIGN.ourPosition, CAMPAIGN.spectrum);
+    drawRounds("roundsChart", traj, fx.median);
+    document.getElementById("roundsNote").innerHTML = "Median drifts from <b>" + median.toFixed(0) + "</b> to <b>" + medianFinal.toFixed(0) + "</b> over six rounds. " +
+      (medianFinal > median + 1 ? "Time favors you — don't rush a weak deal." :
+       medianFinal < median - 1 ? "Time erodes the bill — lock the strongest version early." :
+       "Stable through negotiation — the fight is the starting median.");
+  } catch (e) { console.error(e); }
+
+  try {
+    const g = document.getElementById("gauge");
+    g.innerHTML = "";
+    let prev = 0;
+    for (const band of CAMPAIGN.spectrum) {
+      const d = document.createElement("div");
+      d.className = "band"; d.style.width = (band.max - prev) + "%"; d.style.background = band.color;
+      d.textContent = band.label; g.appendChild(d); prev = band.max;
+    }
+    const m = document.createElement("div");
+    m.className = "gauge-marker"; m.style.left = "calc(" + medianFinal.toFixed(1) + "% - 1px)";
+    g.appendChild(m);
+    const band = CAMPAIGN.spectrum.find(b => medianFinal <= b.max);
+    document.getElementById("gaugeLabel").textContent = "Post-bargaining landing point: " + band.label + " (" + medianFinal.toFixed(0) + "/100)";
+    document.getElementById("gaugeSub").textContent = "Your position: " + CAMPAIGN.ourPosition + "/100";
+  } catch (e) { console.error(e); }
+}
+
+buildAll(); refresh();
+}
+</script>
+</body>
+</html>

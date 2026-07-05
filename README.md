@@ -1,49 +1,46 @@
-# 6PPD Campaign Model — WA Legislature, 2027
+# 6PPD Ban & Fee — Campaign Model (WA Legislature 2027)
 
-Probabilistic, network-aware decision-support tool for the 6PPD tire-chemical ban and fee campaign (HB 2421 / SB 6119). Built for internal strategy use.
+An interactive war-gaming tool for the 2027 Washington State 6PPD ban-and-fee campaign. Single-file HTML — no build, no dependencies, no server. Open `index.html` in a browser.
+
+**Current version: v8** (engine v9 — correlated voting + tornado sensitivity)
 
 ## What it does
 
-- **Whip count + Monte Carlo** (20,000 simulated floor votes) — P(Senate floor passage) and expected YES votes across 19 real swing senators
-- **Stage-gate gauntlet** — P(becomes law) = product of Senate EET scheduling → committee vote → Ways & Means → Rules → floor → House path
-- **House tab** — full House Environment & Energy Committee roster (21 members, 12D–9R), with 4-gate House path breakdown (ENVI scheduling, ENVI vote, Appropriations, floor calendar)
-- **External forces** — budget crisis, alternative readiness, CA litigation, fee design — each modifying base leans, opposition pressure, and the W&M gate
-- **Coalition & opposition** — real orgs (EPC, TFF, WCA, TU, AWC, tribal nations, CBOs), real opposition (USTMA, ACC, Les Schwab, WA Trucking), lobbyist firm webs
-- **People tab** — named individuals with LinkedIn search links and strategic notes
-- **BDM-style policy forecast** — actor position map, bargaining rounds, landing point gauge
+Models the bill's path from coalition alignment to regulatory rulemaking and answers three questions live, as you adjust assumptions:
 
-## Data integrity rules
+1. **P(becomes law)** — six sequential stage gates (EET scheduling, committee vote, Ways & Means, Rules/calendar, Senate floor, House path), multiplied to a single-session probability.
+2. **The Senate floor** — a 20,000-trial Monte Carlo whip count over 19 in-play senators, each with a heuristic base lean, confidence band, coalition pull, and opposition pressure.
+3. **The landing point** — a BDM weighted-median bargaining model projecting where the bill's substance ends up (from "dies again" to "ban by 2035 + full fee").
 
-- Base leans are **heuristic estimates** from public signals — not facts
-- Donor/employer fields say "→ PDC pull pending" until loaded from the [WA PDC SODA API](https://www.pdc.wa.gov/political-disclosure-reporting-data/browse-search-data)
-- Relationship depths labeled "(est.)" — correct them and recommendations correct themselves
-- No fabricated data for real people
+## The engine
 
-## How to host on GitHub Pages
+- **Correlated voting (new in v8).** Senators don't vote independently — budget news, caucus mood, and leadership pressure move them together. Each Monte Carlo trial draws a shared session shock through a one-factor Gaussian copula; per-senator marginal probabilities are preserved exactly. Correlation ρ is adjustable on the whip tab (default 0.35; ρ = 0 reproduces the old independent model, which was overconfident — too-narrow a vote distribution when the count sits at the 25-vote threshold).
+- **Tornado sensitivity (new in v8).** The Forecast tab re-runs the engine one input at a time — each external force to its worst/best state, every gate ±15 pts, the EPC slate toggled, opposition mobilization ±25%, ρ perturbed — and ranks inputs by their swing in P(law). Read it as a ranking of where to spend effort, not a set of independent promises: real inputs correlate.
+- **Stage-gate pathway.** Live gates pull from sliders; a binding-constraint readout flags the lowest gate.
+- **Deployment recommendations.** Tests every untried org→senator relationship and ranks by floor-passage gain × pivot probability.
 
-1. Create a new GitHub repository (can be private or public)
-2. Upload `index.html` to the repo root
-3. Go to **Settings → Pages → Source**: set branch to `main`, folder to `/ (root)`
-4. Save — GitHub will publish the site at `https://[yourorg].github.io/[repo]`
-5. Share the URL with colleagues (private repos require GitHub login to access Pages)
+## Tabs
 
-## Calibration (June 2026)
+| Tab | Contents |
+|---|---|
+| Overview | Gauntlet status, top-ranked moves, current blockers |
+| Path to Passage | The full 12-step legislative roadmap with live gate percentages |
+| Senate | Whip count, committees, 19 senator profiles, org→senator relationship map |
+| House | ENVI/Appropriations/floor-calendar gates, key member profiles |
+| Players & Forces | Coalition orgs, opposition, external forces, named individuals |
+| Forecast | Actor position map, bargaining landing point, tornado chart |
+| Method | What's real vs. estimated, engine documentation, sources |
 
-| Scenario | P(floor) | P(law) |
-|---|---|---|
-| 2026 reality (defaults) | ~55% | ~1.2% |
-| Opposition surge | ~36% | ~0.3% |
-| 2027 path-to-win | ~94% | ~27% |
+## Data honesty
 
-The 2026 retrodict is correct: SB 6119 received a hearing in Senate EET (Jan 20) and never got an executive session. HB 2421 cleared ENVI and Appropriations and died at the floor calendar. The model reproduces this via the scheduling gate (45% default), not the floor vote.
+Real: committee rosters, sponsors, 2026 procedural history (SB 6119 died without an exec session; HB 2421 cleared two committees and died at the floor calendar), testimony, retirements, litigation, and every named organization. Estimated: base leans (labeled heuristics with ±5/±12/±18-pt confidence bands), relationship depths (editable in the UI), opposition mobilization, and engine constants. Donor fields are empty pending a PDC pull.
 
-## Key sources
+## Usage notes
 
-- Senate EET roster: [leg.wa.gov](https://leg.wa.gov/about-the-legislature/committees/senate/enet/)
-- House ENVI roster: [leg.wa.gov](https://leg.wa.gov/about-the-legislature/committees/house-of-representatives/envi/) (pulled June 2026)
-- HB 2421 / SB 6119 history: [LegiScan](https://legiscan.com/WA/bill/HB2421/2025)
-- Hearing testimony: [Puget Sound Institute](https://www.pugetsoundinstitute.org/) / TVW
-- PDC lobbying registrations: [PDC SODA API](https://www.pdc.wa.gov/political-disclosure-reporting-data)
+- Scenario buttons (2026 reality check / Opposition surge / Path to win) set coherent assumption bundles; any manual change switches to Custom.
+- The Relationships grid is the highest-value input — map what you actually know before trusting the deployment recommendations.
+- State is in-memory only; a page reload resets to defaults.
 
----
-*Internal strategy tool. Real people named from public records. Leans and relationships are labeled estimates. Verify roster before acting. Not for external distribution.*
+## Caveats
+
+Internal strategy tool. Real people are named from public records; leans and relationships are labeled estimates, not facts. Stage gates are modeled as independent but correlate in reality (correlating the gates the way v8 correlated the votes is the next known improvement). Verify rosters and identities before acting. Not for external distribution.
